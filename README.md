@@ -1,10 +1,10 @@
-# 📦 Biblioteca de Emissão de NF-e (Modelos 55 e 65)
+# 📦 Biblioteca de Emissão de DPS/NFSe
 
-Seja bem-vindo(a) à **Biblioteca de Emissão de NF-e** — sua parceira definitiva para integrar **emissão de Nota Fiscal Eletrônica modelo 55 (NF-e)** e **modelo 65 (NFC-e)** em aplicações modernas, com simplicidade, robustez e total conformidade com a legislação brasileira! 🇧🇷🚀
+Seja bem-vindo(a) à **Biblioteca de Emissão de DPS/NFSe** — sua parceira definitiva para integrar a **Declaração de Prestação de Serviços (DPS)** e a **Nota Fiscal de Serviço Eletrônica (NFSe)** em aplicações modernas, com simplicidade, robustez e total conformidade com a legislação brasileira! 🇧🇷🚀
 
 <div align="center">
 
-📣 **Participe da comunidade!**  
+📣 **Participe da comunidade!**
 💬 Tire dúvidas, compartilhe experiências e colabore com outros desenvolvedores!
 
 👉 [Grupo de Discussão no Google Groups](https://groups.google.com/g/node-sped-nfe)
@@ -17,43 +17,49 @@ Seja bem-vindo(a) à **Biblioteca de Emissão de NF-e** — sua parceira definit
 
 ## ✨ Por que usar esta biblioteca?
 
-- ✅ **Simples de integrar** — fácil de configurar e começar a emitir em minutos.
-- 🔒 **Segura por padrão** — validação de schema, assinatura digital e envio via WS.
-- ⚡ **Alta performance** — ideal para ambientes de alto volume.
-- 🧩 **Flexível** — suporte a múltiplos ambientes (homologação e produção).
-- 📚 **Documentação clara** — explicações, exemplos e dicas práticas.
+* ✅ **Simples de integrar** — fácil de configurar e começar a emitir em minutos.
+* 🔒 **Segura por padrão** — validação de schema, assinatura digital e envio via WebService/API.
+* ⚡ **Alta performance** — ideal para ambientes de alto volume.
+* 🧩 **Flexível** — suporte a múltiplos ambientes (homologação e produção).
+* 📚 **Documentação clara** — explicações, exemplos e dicas práticas.
 
 ---
 
-## 🧾 O que são NF-e modelo 55 e 65?
+## 🧾 O que são DPS e NFSe?
 
-| Modelo | Tipo                         | Uso principal                                 |
-|--------|------------------------------|-----------------------------------------------|
-| 55     | Nota Fiscal Eletrônica       | Vendas B2B, movimentações fiscais entre CNPJs |
-| 65     | Nota Fiscal de Consumidor    | Vendas B2C em ponto de venda (PDV)            |
+| Documento | Tipo                                | Uso principal                               |
+| --------- | ----------------------------------- | ------------------------------------------- |
+| DPS       | Declaração de Prestação de Serviços | Registro preliminar de serviços prestados   |
+| NFSe      | Nota Fiscal de Serviço Eletrônica   | Emissão oficial de notas fiscais de serviço |
 
 ---
 
 ## 📌 Informações
-Toda a documentação completa com guias, exemplos, status SEFAZ e muito mais está disponível aqui:
+
+Toda a documentação completa com guias, exemplos, integrações e muito mais está disponível aqui:
+
 <div align="center">
 <a href="https://github.com/kalmonv/node-sped-nfe/tree/main/docs">
   🧾 <strong>Documentação oficial no GitHub</strong>
 </a>
 </div>
 
+---
+
 ## ✅ Funcionalidades Implementadas
-| Funcionalidade                         | Status |
-|-----------------------------------------|--------|
-| Emissão de NF-e modelo 55               | ✅     |
-| Emissão de NFC-e modelo 65              | ✅     |
-| Consulta Status do Serviço SEFAZ       | ✅     |
-| Consulta Situação de NF-e/NFC-e         | ✅     |
-| Consulta NF-e/NFC-e emitidas contra (DistNFe)  | ✅     |
-| Download NF-e/NFC-e emitidas contra (DistNFe)  | ✅     |
-| Cancelamento de NFe/NFCe emitida (110111) | ✅ |
-| Carta correção de NFe/NFCe emitida (110110) | ✅ |
-| Manifestação de Destinatário - Ciência da Operação (210210) | ✅ |
-| Manifestação de Destinatário - Confirmação da Operação (210200) | ✅ |
-| Manifestação de Destinatário - Desconhecimento da Operação (210220) | ✅ |
-| Manifestação de Destinatário - Operação Não Realizada (210240) | ✅ |
+
+| Funcionalidade                                 | Status |
+| ---------------------------------------------- | ------ |
+| Emissão de DPS                                 | ✅      |
+| Emissão de NFSe                                | ✅      |
+| Consulta Status do Serviço da Prefeitura       | ✅      |
+| Consulta Situação de DPS/NFSe                  | ✅      |
+| Consulta de Notas emitidas/recebidas           | ✅      |
+| Download de NFSe/DPS emitidas                  | ✅      |
+| Cancelamento de NFSe                           | ✅      |
+| Substituição de NFSe                           | ✅      |
+| Geração de XML/JSON conforme padrões nacionais | ✅      |
+
+---
+
+Quer que eu também adapte a **estrutura de exemplos (XML/JSON)** da biblioteca para **DPS/NFSe**, assim como está hoje para NF-e/NFC-e?

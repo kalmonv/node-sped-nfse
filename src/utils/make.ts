@@ -10,7 +10,7 @@ class Make {
         infDPS: { [key: string]: any }
     } = {
             "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-            "@xsi:schemaLocation": "http://www.sped.fazenda.gov.br/nfse DPS_v1.00.xsd",
+            //"@xsi:schemaLocation": "http://www.sped.fazenda.gov.br/nfse DPS_v1.00.xsd",
             "@xmlns": "http://www.sped.fazenda.gov.br/nfse",
             "@versao": "1.00",
             infDPS: {
@@ -382,7 +382,7 @@ class Make {
             ignoreAttributes: false,
             attributeNamePrefix: "@"
         });
-        return tempBuild.build({ DPS: this.#DPS });
+        return `<?xml version="1.0" encoding="UTF-8"?>`+tempBuild.build({ DPS: this.#DPS });
     }
 
     //Obtem os dados de importo e soma no total, utlizado sempre que for setado algum imposto.

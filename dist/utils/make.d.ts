@@ -24,7 +24,7 @@ declare class Make {
     tagVDedRedDocNFSeMun(obj: any): void;
     tagTribMun(obj: any): void;
     tagTotTribPTotTrib(obj: any): void;
-    xml(): any;
+    xml(): string;
 }
 export { Make };
 declare const _default: {

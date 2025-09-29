@@ -11,7 +11,7 @@ class Make {
         _Make_instances.add(this);
         _Make_DPS.set(this, {
             "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-            "@xsi:schemaLocation": "http://www.sped.fazenda.gov.br/nfse DPS_v1.00.xsd",
+            //"@xsi:schemaLocation": "http://www.sped.fazenda.gov.br/nfse DPS_v1.00.xsd",
             "@xmlns": "http://www.sped.fazenda.gov.br/nfse",
             "@versao": "1.00",
             infDPS: {
@@ -323,7 +323,7 @@ class Make {
             ignoreAttributes: false,
             attributeNamePrefix: "@"
         });
-        return tempBuild.build({ DPS: __classPrivateFieldGet(this, _Make_DPS, "f") });
+        return `<?xml version="1.0" encoding="UTF-8"?>` + tempBuild.build({ DPS: __classPrivateFieldGet(this, _Make_DPS, "f") });
     }
 }
 _Make_DPS = new WeakMap(), _Make_ICMSTot = new WeakMap(), _Make_instances = new WeakSet(), _Make_gerarChaveNFe = function _Make_gerarChaveNFe() {

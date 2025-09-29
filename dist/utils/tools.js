@@ -135,7 +135,7 @@ class Tools {
     }
     async enviarDPS(xml) {
         const isLote = Array.isArray(xml);
-        xml = this.normalizeUtf8Xml(xml);
+        //xml = this.normalizeUtf8Xml(xml)
         // >>> IMPORTANTÍSSIMO: deixe NFSeEnvio apontar pro SEFIN (não pro ADN)
         // Ex.: this.urlEventos.gov.homologacao.NFSeEnvio = 'https://sefin.nfse.gov.br/sefinnacional/nfse'
         const url = isLote
