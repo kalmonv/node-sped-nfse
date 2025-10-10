@@ -6160,20 +6160,20 @@ const formatData = (dataUsr = new Date()) => {
     return formatoISO;
 }
 
+const zip2xml = (docZipBase64: string): string => {
+    // 1. Converte base64 para buffer
+    const zippedBuffer = Buffer.from(docZipBase64, 'base64');
+
+    // 2. Descomprime com gzip
+    const xmlBuffer = gunzipSync(zippedBuffer);
+
+    // 3. Converte para string UTF-8
+    return xmlBuffer.toString('utf8');
+}
+
 const docZip = async (xml: string, retorno: string = "original") => {
     return new Promise(async (resolve, reject) => {
         if (typeof retorno == "undefined") retorno = "original";
-
-        const decodeDocZipToXml = (docZipBase64: string): string => {
-            // 1. Converte base64 para buffer
-            const zippedBuffer = Buffer.from(docZipBase64, 'base64');
-
-            // 2. Descomprime com gzip
-            const xmlBuffer = gunzipSync(zippedBuffer);
-
-            // 3. Converte para string UTF-8
-            return xmlBuffer.toString('utf8');
-        }
 
         const jXml = await xml2json(xml) as any;
 
@@ -6185,7 +6185,7 @@ const docZip = async (xml: string, retorno: string = "original") => {
                 docZips = [docZips];
 
             for (const doc of docZips) {
-                doc['xml'] = decodeDocZipToXml(doc['#text'])
+                doc['xml'] = zip2xml(doc['#text'])
                 doc['NSU'] = doc['@NSU'];
                 doc['schema'] = doc['@schema'];
 
@@ -6230,4 +6230,4 @@ const certInfo = async (pfx: string, senha: string) => {
     })
 }
 
-export { cUF2UF, UF2cUF, json2xml, xml2json, formatData, docZip, certInfo, cMun2Mun, cPais2Pais }
+export { cUF2UF, UF2cUF, json2xml, xml2json, formatData, docZip, certInfo, cMun2Mun, cPais2Pais, zip2xml }

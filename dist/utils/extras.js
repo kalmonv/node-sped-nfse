@@ -6128,18 +6128,18 @@ const formatData = (dataUsr = new Date()) => {
     const formatoISO = `${ano}-${mes}-${dia}T${horas}:${minutos}:${segundos}${fusoHorario >= 0 ? '+' : '-'}${String(Math.abs(fusoHorario)).padStart(2, '0')}:00`;
     return formatoISO;
 };
+const zip2xml = (docZipBase64) => {
+    // 1. Converte base64 para buffer
+    const zippedBuffer = Buffer.from(docZipBase64, 'base64');
+    // 2. Descomprime com gzip
+    const xmlBuffer = gunzipSync(zippedBuffer);
+    // 3. Converte para string UTF-8
+    return xmlBuffer.toString('utf8');
+};
 const docZip = async (xml, retorno = "original") => {
     return new Promise(async (resolve, reject) => {
         if (typeof retorno == "undefined")
             retorno = "original";
-        const decodeDocZipToXml = (docZipBase64) => {
-            // 1. Converte base64 para buffer
-            const zippedBuffer = Buffer.from(docZipBase64, 'base64');
-            // 2. Descomprime com gzip
-            const xmlBuffer = gunzipSync(zippedBuffer);
-            // 3. Converte para string UTF-8
-            return xmlBuffer.toString('utf8');
-        };
         const jXml = await xml2json(xml);
         try {
             var docZips = jXml["nfeDistDFeInteresseResult"]["retDistDFeInt"];
@@ -6149,7 +6149,7 @@ const docZip = async (xml, retorno = "original") => {
             if (!Array.isArray(docZips))
                 docZips = [docZips];
             for (const doc of docZips) {
-                doc['xml'] = decodeDocZipToXml(doc['#text']);
+                doc['xml'] = zip2xml(doc['#text']);
                 doc['NSU'] = doc['@NSU'];
                 doc['schema'] = doc['@schema'];
                 delete doc['#text'];
@@ -6193,4 +6193,4 @@ const certInfo = async (pfx, senha) => {
         });
     });
 };
-export { cUF2UF, UF2cUF, json2xml, xml2json, formatData, docZip, certInfo, cMun2Mun, cPais2Pais };
+export { cUF2UF, UF2cUF, json2xml, xml2json, formatData, docZip, certInfo, cMun2Mun, cPais2Pais, zip2xml };

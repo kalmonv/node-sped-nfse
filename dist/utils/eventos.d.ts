@@ -3,7 +3,7 @@ declare const urlEventos: {
         homologacao: {
             NFSeEnvio: string;
             NFSeConsulta: string;
-            NFSeCancelar: string;
+            NFSeEventos: string;
             NFSeConsultaEvento: string;
             DPSConsulta: string;
             DANFSe: string;
@@ -15,13 +15,13 @@ declare const urlEventos: {
             ParamBeneficio: string;
             LoteEnvio: string;
             LoteConsulta: string;
-            DFeDistribNSU: string;
-            DFeEventosPorChave: string;
+            DFe: string;
+            DFeEventos: string;
         };
         producao: {
             NFSeEnvio: string;
             NFSeConsulta: string;
-            NFSeCancelar: string;
+            NFSeEventos: string;
             NFSeConsultaEvento: string;
             DPSConsulta: string;
             DANFSe: string;
@@ -33,8 +33,8 @@ declare const urlEventos: {
             ParamBeneficio: string;
             LoteEnvio: string;
             LoteConsulta: string;
-            DFeDistribNSU: string;
-            DFeEventosPorChave: string;
+            DFe: string;
+            DFeEventos: string;
         };
     };
 };
