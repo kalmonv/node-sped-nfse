@@ -28,18 +28,18 @@ DPS.tagPrest({
     //NIF: "",
     //cNaoNIF: "",
     //CAEPF: "",
-    //IM: "845600",
-    //xNome: "Guarix", //O nome ou razão social do prestador não deve ser informado quando o emitente da DPS for o próprio prestador.
+    //IM: "",
+    //xNome: "TESTE", //O nome ou razão social do prestador não deve ser informado quando o emitente da DPS for o próprio prestador.
 })
 
 /*
 DPS.tagPrestEnd({
-    xLgr: "Av Para",
-    nro: "138",
+    xLgr: "Av Node",
+    nro: "38",
     //xCpl: "",
-    xBairro: "Uniao",
-    fone: "5566981352912",
-    email: "contato@guarix.com.br",
+    xBairro: "github",
+    fone: "556640028922",
+    email: "pp@teste.com.br",
 })
 */
 DPS.tagPrestRegTrib({
@@ -97,7 +97,8 @@ DPS.tagTotTribPTotTrib({
 
 myTools.xmlSign(DPS.xml()).then(xmlSign => {
     fs.writeFileSync("./exemplos/DPS_sign.xml", xmlSign, { endereco: "utf8" });
-    console.log("./exemplos/DPS_sign.xml -> SALVO")
+    console.log("./exemplos/DPS_sign.xml -> SALVO");
+    
     myTools.enviarDPS(xmlSign).then(res => {
         if (res?.erros?.length > 0) { //Erro
             console.info(res.erros);
