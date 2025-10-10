@@ -1,5 +1,4 @@
-import { Console } from "console";
-import { Make, Tools, json2xml, formatData, zip2xml } from "../dist/index.js"
+import { Make, Tools, formatData, zip2xml } from "../dist/index.js"
 import fs from "fs";
 
 let myTools = new Tools({ //Configuração de habiente e sistema
@@ -98,7 +97,7 @@ DPS.tagTotTribPTotTrib({
 myTools.xmlSign(DPS.xml()).then(xmlSign => {
     fs.writeFileSync("./exemplos/DPS_sign.xml", xmlSign, { endereco: "utf8" });
     console.log("./exemplos/DPS_sign.xml -> SALVO");
-    
+
     myTools.enviarDPS(xmlSign).then(res => {
         if (res?.erros?.length > 0) { //Erro
             console.info(res.erros);
