@@ -39,7 +39,7 @@ Seja bem-vindo(a) à **Biblioteca de Emissão de DPS/NFSe** — sua parceira def
 Toda a documentação completa com guias, exemplos, integrações e muito mais está disponível aqui:
 
 <div align="center">
-<a href="https://github.com/kalmonv/node-sped-nfe/tree/main/docs">
+<a href="https://github.com/kalmonv/node-sped-nfse/tree/main/docs">
   🧾 <strong>Documentação oficial no GitHub</strong>
 </a>
 </div>
@@ -59,7 +59,3 @@ Toda a documentação completa com guias, exemplos, integrações e muito mais e
 | Cancelamento de NFSe                           | 🔴      |
 | Substituição de NFSe                           | 🔴      |
 | Geração de XML/JSON conforme padrões nacionais | ✅      |
-
----
-
-Quer que eu também adapte a **estrutura de exemplos (XML/JSON)** da biblioteca para **DPS/NFSe**, assim como está hoje para NF-e/NFC-e?
