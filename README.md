@@ -54,10 +54,10 @@ Toda a documentação completa com guias, exemplos, integrações e muito mais e
 | Emissão de NFSe                                | ✅      |
 | Consulta Status do Serviço da Prefeitura       | ✅      |
 | Consulta Situação de DPS/NFSe                  | ✅      |
-| Consulta de Notas emitidas/recebidas           | ✅      |
-| Download de NFSe/DPS emitidas                  | ✅      |
-| Cancelamento de NFSe                           | ✅      |
-| Substituição de NFSe                           | ✅      |
+| Consulta de Notas emitidas/recebidas           | 🔴      |
+| Download de NFSe/DPS emitidas                  | 🔴      |
+| Cancelamento de NFSe                           | 🔴      |
+| Substituição de NFSe                           | 🔴      |
 | Geração de XML/JSON conforme padrões nacionais | ✅      |
 
 ---
