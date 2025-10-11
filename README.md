@@ -48,14 +48,26 @@ Toda a documentação completa com guias, exemplos, integrações e muito mais e
 
 ## ✅ Funcionalidades Implementadas
 
-| Funcionalidade                                 | Status |
+| DPS - Nota Fiscal Serviço                      | Status |
 | ---------------------------------------------- | ------ |
-| Emissão de DPS                                 | ✅      |
-| Emissão de NFSe                                | ✅      |
-| Consulta Status do Serviço da Prefeitura       | ✅      |
-| Consulta Situação de DPS/NFSe                  | ✅      |
-| Consulta de Notas emitidas/recebidas           | 🔴      |
-| Download de NFSe/DPS emitidas                  | 🔴      |
-| Cancelamento de NFSe                           | 🔴      |
-| Substituição de NFSe                           | 🔴      |
-| Geração de XML/JSON conforme padrões nacionais | ✅      |
+| Gerar XML DPS                                  | ✅     |
+| Emissão de DPS                                 | ✅     |
+| DANFE (PDF da NFSe)                            | ✅     |
+| Consulta Eventos de NFSe                       | ✅     |
+| Consulta NFSe emitidas contra CNPJ/CPF         | ✅     |
+| Consulta DPS                                   | ✅     |
+| Enviar Evento                                  | 🔴     |
+| Enviar Evento                                  | 🔴     |
+
+
+| MUNICIPAL                                      | Status  |
+| ---------------------------------------------- | ------  |
+| Consulta Retenção Municipal                    | ✅      |
+| Altera Retenção Municipal                      | 🔴      |
+| Consulta Regime Especial                       | ✅      |
+| Altera Regime Especial                         | 🔴      |
+| Consulta Beneficiario Municipal                | ✅      |
+| Altera Beneficiario Municipal                  | 🔴      |
+| Consulta Alicota                               | ✅      |
+| Consulta Historico de Alicota                  | ✅      |
+| Consulta Convenio                              | ✅      |

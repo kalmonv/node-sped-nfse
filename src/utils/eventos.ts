@@ -10,12 +10,17 @@ const urlEventos = {
             DANFSe: "https://sefin.producaorestrita.nfse.gov.br/danfse/{chAcesso}",
 
             // Parâmetros Municipais (homolog)
-            ParamConvenio: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/convenio",
-            ParamAliquota: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/{codigoServico}/{competencia}/aliquota",
-            ParamHistoricoAliquotas: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/{codigoServico}/historicoaliquotas",
-            ParamRetencoes: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/{competencia}/retencoes",
-            ParamRegimesEspeciais: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/{codigoServico}/{competencia}/regimes_especiais",
-            ParamBeneficio: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/{numeroBeneficio}/{competencia}/beneficio",
+            ParamConvenio: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/convenio",
+            ParamAliquota: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{codigoServico}/{competencia}/aliquota",
+            ParamHistoricoAliquotas: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{codigoServico}/historicoaliquotas",
+            ParamBefeniciarioMunicipal: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{numeroBeneficio}/{competencia}/beneficio",
+
+            ParamRetencoes: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{competencia}/retencoes",
+            ParamRetencoesAltera: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/retencoes/{idManut}",
+
+            ParamRegimesEspeciais: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{codigoServico}/{competencia}/regimes_especiais",
+            ParamRegimesEspeciaisAltera: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/regimes_especiais/{idManut}",
+            ParamBeneficio: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{numeroBeneficio}/{competencia}/beneficio",
 
             // ADN (Produção Restrita) — lote e distribuição DF-e
             LoteEnvio: "https://adn.producaorestrita.nfse.gov.br/dfe",
@@ -31,15 +36,20 @@ const urlEventos = {
             NFSeEventos: "https://sefin.nfse.gov.br/sefinnacional/nfse/{chAcesso}/eventos",
             NFSeConsultaEvento: "https://sefin.nfse.gov.br/sefinnacional/nfse/{chAcesso}/eventos/{tipoEvento}/{numSeqEvento}",
             DPSConsulta: "https://sefin.nfse.gov.br/sefinnacional/dps/{id}",
-            DANFSe: "https://adn.nfse.gov.br/danfse/{chAcesso}",
+            DANFSe: "https://adn.nfse.gov.br/danfse/{chAcesso}", //OKAY
 
-            // Parâmetros Municipais
-            ParamConvenio: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/convenio",
-            ParamAliquota: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/{codigoServico}/{competencia}/aliquota",
-            ParamHistoricoAliquotas: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/{codigoServico}/historicoaliquotas",
-            ParamRetencoes: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/{competencia}/retencoes",
-            ParamRegimesEspeciais: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/{codigoServico}/{competencia}/regimes_especiais",
-            ParamBeneficio: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codMunicipal}/{numeroBeneficio}/{competencia}/beneficio",
+            // Parâmetros Municipais - https://sefin.nfse.gov.br/sefinnacional
+            ParamConvenio: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/convenio",
+            ParamAliquota: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{codigoServico}/{competencia}/aliquota",
+            ParamHistoricoAliquotas: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{codigoServico}/historicoaliquotas",
+            ParamBefeniciarioMunicipal: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{numeroBeneficio}/{competencia}/beneficio",
+
+            ParamRetencoes: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{competencia}/retencoes",
+            ParamRetencoesAltera: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/retencoes/{idManut}",
+
+            ParamRegimesEspeciais: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{codigoServico}/{competencia}/regimes_especiais",
+            ParamRegimesEspeciaisAltera: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/regimes_especiais/{idManut}",
+            ParamBeneficio: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{numeroBeneficio}/{competencia}/beneficio",
 
             // Lote e distribuição DF-e
             LoteEnvio: "https://adn.nfse.gov.br/DFe/",

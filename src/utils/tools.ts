@@ -68,11 +68,51 @@ class Tools {
         return gz.toString('base64')
     }
 
-    async checkConvenio(codMunicipal: string): Promise<any> {
+    // -----------------------------------   Parâmetros Municipais -----------------------------------------
+    async alteraRetMunicipal(idManut: string): Promise<any> { //!FALTA - ERRO 500
         return new Promise(async (resolve, reject) => {
-            //this.#config?.tpAmb 1
+            if (this.#config.cOrgao == undefined) return reject("Tools({..., cOrgao }) Delcaração faltando.");
+            return reject("Tools.alteraRetMunicipal() - Não implementado!");
+
             const req = https.request(
-                urlEventos?.gov?.[this.#config?.tpAmb == 1  ? 'producao' : 'homologacao']?.ParamConvenio.replace("{codMunicipal}", codMunicipal),
+                urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRegimesEspeciaisAltera.replace("{codigoMunicipio}", this.#config.cOrgao).replace("{idManut}", idManut),
+                {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    // ideal: true em produção; você havia desativado a verificação
+                    rejectUnauthorized: false,
+                    ...(await this.#certTools()) // mTLS: cert/ key ou pfx/passphrase
+                },
+                (res) => {
+                    let data = ''
+                    res.on('data', (chunk) => (data += chunk))
+                    res.on('end', () => {
+                        // tente parsear JSON; se falhar, devolve string
+                        try { resolve(JSON.parse(data)) } catch { resolve(data) }
+                    })
+                }
+            )
+            req.setTimeout(this.#config.timeout * 1000, () => {
+                reject({
+                    name: 'TimeoutError',
+                    message: 'The operation was aborted due to timeout'
+                });
+                req.destroy(); // cancela a requisição
+            });
+            req.on('timeout', () => req.destroy(new Error('Timeout')))
+            req.on('error', reject)
+            req.end()
+        })
+    }
+    async consultaRetMunicipal(competencia: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            if (this.#config.cOrgao == undefined) return reject("Tools({..., cOrgao }) Delcaração faltando.");
+            console.log(urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRetencoes.replace("{codigoMunicipio}", this.#config.cOrgao).replace("{competencia}", competencia))
+
+            const req = https.request(
+                urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRetencoes.replace("{codigoMunicipio}", this.#config.cOrgao).replace("{competencia}", competencia),
                 {
                     method: 'GET',
                     headers: {
@@ -91,12 +131,277 @@ class Tools {
                     })
                 }
             )
-
+            req.setTimeout(this.#config.timeout * 1000, () => {
+                reject({
+                    name: 'TimeoutError',
+                    message: 'The operation was aborted due to timeout'
+                });
+                req.destroy(); // cancela a requisição
+            });
             req.on('timeout', () => req.destroy(new Error('Timeout')))
             req.on('error', reject)
             req.end()
         })
     }
+
+
+    async alteraRegEspecial(idManut: string): Promise<any> { //!FALTA - ERRO 500
+        return new Promise(async (resolve, reject) => {
+            if (this.#config.cOrgao == undefined) return reject("Tools({..., cOrgao }) Delcaração faltando.");
+            return reject("Tools.alteraRegEspecial() - Não implementado!");
+
+            const req = https.request(
+                urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRegimesEspeciaisAltera.replace("{codigoMunicipio}", this.#config.cOrgao).replace("{idManut}", idManut),
+                {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    // ideal: true em produção; você havia desativado a verificação
+                    rejectUnauthorized: false,
+                    ...(await this.#certTools()) // mTLS: cert/ key ou pfx/passphrase
+                },
+                (res) => {
+                    let data = ''
+                    res.on('data', (chunk) => (data += chunk))
+                    res.on('end', () => {
+                        // tente parsear JSON; se falhar, devolve string
+                        try { resolve(JSON.parse(data)) } catch { resolve(data) }
+                    })
+                }
+            )
+            req.setTimeout(this.#config.timeout * 1000, () => {
+                reject({
+                    name: 'TimeoutError',
+                    message: 'The operation was aborted due to timeout'
+                });
+                req.destroy(); // cancela a requisição
+            });
+            req.on('timeout', () => req.destroy(new Error('Timeout')))
+            req.on('error', reject)
+            req.end()
+        })
+    }
+    async consultaRegEspecial(codigoServico: string, competencia: string): Promise<any> { //!FALTA - ERRO 500
+        return new Promise(async (resolve, reject) => {
+            if (this.#config.cOrgao == undefined) return reject("Tools({..., cOrgao }) Delcaração faltando.");
+            console.log(urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRegimesEspeciais.replace("{codigoMunicipio}", this.#config.cOrgao).replace("{codigoServico}", String(codigoServico).replace(/\D/g, '').padStart(9, '0').replace(/^(\d{2})(\d{2})(\d{2})(\d{3})$/, '$1.$2.$3.$4')).replace("{competencia}", competencia))
+
+            const req = https.request(
+                urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRegimesEspeciais.replace("{codigoMunicipio}", this.#config.cOrgao).replace("{codigoServico}", String(codigoServico).replace(/\D/g, '').padStart(9, '0').replace(/^(\d{2})(\d{2})(\d{2})(\d{3})$/, '$1.$2.$3.$4')).replace("{competencia}", competencia),
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    // ideal: true em produção; você havia desativado a verificação
+                    rejectUnauthorized: false,
+                    ...(await this.#certTools()) // mTLS: cert/ key ou pfx/passphrase
+                },
+                (res) => {
+                    let data = ''
+                    res.on('data', (chunk) => (data += chunk))
+                    res.on('end', () => {
+                        // tente parsear JSON; se falhar, devolve string
+                        try { resolve(JSON.parse(data)) } catch { resolve(data) }
+                    })
+                }
+            )
+            req.setTimeout(this.#config.timeout * 1000, () => {
+                reject({
+                    name: 'TimeoutError',
+                    message: 'The operation was aborted due to timeout'
+                });
+                req.destroy(); // cancela a requisição
+            });
+            req.on('timeout', () => req.destroy(new Error('Timeout')))
+            req.on('error', reject)
+            req.end()
+        })
+    }
+
+    async alteraBenefMunic(numeroBeneficio: string, competencia: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            if (this.#config.cOrgao == undefined) return reject("Tools({..., cOrgao }) Delcaração faltando.");
+            return reject("Tools.alteraBenefMunic() - Não implementado!");
+
+            const req = https.request(
+                urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamBefeniciarioMunicipal.replace("{codigoMunicipio}", this.#config.cOrgao).replace("{numeroBeneficio}", numeroBeneficio).replace("{competencia}", competencia),
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    // ideal: true em produção; você havia desativado a verificação
+                    rejectUnauthorized: false,
+                    ...(await this.#certTools()) // mTLS: cert/ key ou pfx/passphrase
+                },
+                (res) => {
+                    let data = ''
+                    res.on('data', (chunk) => (data += chunk))
+                    res.on('end', () => {
+                        // tente parsear JSON; se falhar, devolve string
+                        try { resolve(JSON.parse(data)) } catch { resolve(data) }
+                    })
+                }
+            )
+            req.setTimeout(this.#config.timeout * 1000, () => {
+                reject({
+                    name: 'TimeoutError',
+                    message: 'The operation was aborted due to timeout'
+                });
+                req.destroy(); // cancela a requisição
+            });
+            req.on('timeout', () => req.destroy(new Error('Timeout')))
+            req.on('error', reject)
+            req.end()
+        })
+    }
+
+    async consultaBenefMunic(numeroBeneficio: string, competencia: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            if (this.#config.cOrgao == undefined) return reject("Tools({..., cOrgao }) Delcaração faltando.");
+            const req = https.request(
+                urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamBefeniciarioMunicipal.replace("{codigoMunicipio}", this.#config.cOrgao).replace("{numeroBeneficio}", numeroBeneficio).replace("{competencia}", competencia),
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    // ideal: true em produção; você havia desativado a verificação
+                    rejectUnauthorized: false,
+                    ...(await this.#certTools()) // mTLS: cert/ key ou pfx/passphrase
+                },
+                (res) => {
+                    let data = ''
+                    res.on('data', (chunk) => (data += chunk))
+                    res.on('end', () => {
+                        // tente parsear JSON; se falhar, devolve string
+                        try { resolve(JSON.parse(data)) } catch { resolve(data) }
+                    })
+                }
+            )
+            req.setTimeout(this.#config.timeout * 1000, () => {
+                reject({
+                    name: 'TimeoutError',
+                    message: 'The operation was aborted due to timeout'
+                });
+                req.destroy(); // cancela a requisição
+            });
+            req.on('timeout', () => req.destroy(new Error('Timeout')))
+            req.on('error', reject)
+            req.end()
+        })
+    }
+
+    async consultaAlicotaHist(codigoServico: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            if (this.#config.cOrgao == undefined) return reject("Tools({..., cOrgao }) Delcaração faltando.");
+            const req = https.request(
+                urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamHistoricoAliquotas.replace("{codigoMunicipio}", this.#config.cOrgao).replace("{codigoServico}", String(codigoServico).replace(/\D/g, '').padStart(9, '0').replace(/^(\d{2})(\d{2})(\d{2})(\d{3})$/, '$1.$2.$3.$4')),
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    // ideal: true em produção; você havia desativado a verificação
+                    rejectUnauthorized: false,
+                    ...(await this.#certTools()) // mTLS: cert/ key ou pfx/passphrase
+                },
+                (res) => {
+                    let data = ''
+                    res.on('data', (chunk) => (data += chunk))
+                    res.on('end', () => {
+                        // tente parsear JSON; se falhar, devolve string
+                        try { resolve(JSON.parse(data)) } catch { resolve(data) }
+                    })
+                }
+            )
+            req.setTimeout(this.#config.timeout * 1000, () => {
+                reject({
+                    name: 'TimeoutError',
+                    message: 'The operation was aborted due to timeout'
+                });
+                req.destroy(); // cancela a requisição
+            });
+            req.on('timeout', () => req.destroy(new Error('Timeout')))
+            req.on('error', reject)
+            req.end()
+        })
+    }
+
+    async consultaAlicota(codigoServico: string, competencia: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            if (this.#config.cOrgao == undefined) return reject("Tools({..., cOrgao }) Delcaração faltando.");
+            const req = https.request(
+                urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamAliquota.replace("{codigoMunicipio}", this.#config.cOrgao).replace("{codigoServico}", String(codigoServico).replace(/\D/g, '').padStart(9, '0').replace(/^(\d{2})(\d{2})(\d{2})(\d{3})$/, '$1.$2.$3.$4')).replace("{competencia}", competencia),
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    // ideal: true em produção; você havia desativado a verificação
+                    rejectUnauthorized: false,
+                    ...(await this.#certTools()) // mTLS: cert/ key ou pfx/passphrase
+                },
+                (res) => {
+                    let data = ''
+                    res.on('data', (chunk) => (data += chunk))
+                    res.on('end', () => {
+                        // tente parsear JSON; se falhar, devolve string
+                        try { resolve(JSON.parse(data)) } catch { resolve(data) }
+                    })
+                }
+            )
+            req.setTimeout(this.#config.timeout * 1000, () => {
+                reject({
+                    name: 'TimeoutError',
+                    message: 'The operation was aborted due to timeout'
+                });
+                req.destroy(); // cancela a requisição
+            });
+            req.on('timeout', () => req.destroy(new Error('Timeout')))
+            req.on('error', reject)
+            req.end()
+        })
+    }
+
+    async consultaConvenio(): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            if (this.#config.cOrgao == undefined) return reject("Tools({..., cOrgao }) Delcaração faltando.")
+            const req = https.request(
+                urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamConvenio.replace("{codigoMunicipio}", this.#config.cOrgao),
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    // ideal: true em produção; você havia desativado a verificação
+                    rejectUnauthorized: false,
+                    ...(await this.#certTools()) // mTLS: cert/ key ou pfx/passphrase
+                },
+                (res) => {
+                    let data = ''
+                    res.on('data', (chunk) => (data += chunk))
+                    res.on('end', () => {
+                        // tente parsear JSON; se falhar, devolve string
+                        try { resolve(JSON.parse(data)) } catch { resolve(data) }
+                    })
+                }
+            )
+            req.setTimeout(this.#config.timeout * 1000, () => {
+                reject({
+                    name: 'TimeoutError',
+                    message: 'The operation was aborted due to timeout'
+                });
+                req.destroy(); // cancela a requisição
+            });
+            req.on('timeout', () => req.destroy(new Error('Timeout')))
+            req.on('error', reject)
+            req.end()
+        })
+    }
+    // -----------------------------------   Parâmetros Municipais -----------------------------------------
 
     async DFeEventos(chAcesso: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
@@ -170,43 +475,7 @@ class Tools {
         })
     }
 
-    async DPS(id: string): Promise<any> {
-        return new Promise(async (resolve, reject) => {
-            const req = https.request(
-                urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.DPSConsulta.replace("{id}", id),
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json; charset=utf-8',
-                        'Accept': 'application/json',
-                    },
-                    // ideal: true em produção; você havia desativado a verificação
-                    rejectUnauthorized: false,
-                    ...(await this.#certTools()) // mTLS: cert/ key ou pfx/passphrase
-                },
-                (res) => {
-                    let data = ''
-                    res.on('data', (chunk) => (data += chunk))
-                    res.on('end', () => {
-                        // tente parsear JSON; se falhar, devolve string
-                        try { resolve(JSON.parse(data)) } catch { resolve(data) }
-                    })
-                }
-            )
-            req.setTimeout(this.#config.timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')))
-            req.on('error', reject)
-            req.end()
-        })
-    }
-
-    async DPSVerifica(id: string): Promise<any> {
+    async consultaDPS(id: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             const req = https.request(
                 urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.DPSConsulta.replace("{id}", id),
@@ -262,8 +531,6 @@ class Tools {
                     res.on('data', (chunk) => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
                     res.on('end', () => {
                         const buf = Buffer.concat(chunks);
-                        console.log(`[statusCode: ${res.statusCode}]`);
-
                         const ctype = (res.headers['content-type'] || '').toLowerCase();
 
                         // Se veio PDF, devolve o Buffer do PDF
@@ -374,51 +641,6 @@ class Tools {
             req.end()
         })
     }
-
-    async DPSConsulta(id: string): Promise<any> {
-        return new Promise(async (resolve, reject) => {
-            const url = urlEventos?.gov?.[this.#config?.tpAmb == 1 ? 'producao' : 'homologacao']?.DPSConsulta.replace("{id}", id);
-            const req = https.request(
-                url,
-                {
-                    method: 'GET',
-                    headers: {
-                        // Não envie Content-Type em GET; peça PDF explicitamente
-                        'Accept': 'application/json'
-                    },
-                    // ideal: true em produção; aqui você havia desativado
-                    rejectUnauthorized: false,
-                    ...(await this.#certTools()) // mTLS
-                },
-                (res) => {
-                    const chunks: Buffer[] = [];
-                    res.on('data', (chunk) => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
-                    res.on('end', () => {
-                        const buf = Buffer.concat(chunks);
-                        console.log(`[statusCode: ${res.statusCode}]`);
-
-                        // Tenta JSON (respostas de sucesso/erro vêm em JSON)
-                        try {
-                            const json = JSON.parse(buf.toString('utf8'));
-                            return resolve(json);
-                        } catch {
-                            // Se não for JSON, devolve texto (HTML/diagnóstico)
-                            return resolve(buf.toString('utf8'));
-                        }
-                    });
-                }
-            );
-
-            req.setTimeout(this.#config.timeout * 1000, () => {
-                reject({ name: 'TimeoutError', message: 'The operation was aborted due to timeout' });
-                req.destroy();
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
-            req.end();
-        });
-    }
-
 
     async enviarDPS(this: any, xml: string | string[]): Promise<any> {
         const isLote = Array.isArray(xml)

@@ -1,6 +1,6 @@
 {
   "name": "node-sped-nfse",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Kalmon V. Tavares",
   "type": "module",
   "main": "dist/index.js",
@@ -47,7 +47,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kalmonv/node-sped-nfe.git"
+    "url": "https://github.com/kalmonv/node-sped-nfse.git"
   },
   "license": "MIT"
 }

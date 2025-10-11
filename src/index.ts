@@ -1,5 +1,5 @@
 import { Tools } from "./utils/tools.js"
 import { Make } from "./utils/make.js"
-import { cUF2UF, UF2cUF, json2xml, xml2json, formatData, docZip, certInfo, cMun2Mun, cPais2Pais, zip2xml } from "./utils/extras.js"
+import { cUF2UF, UF2cUF, json2xml, xml2json, formatData, certInfo, cMun2Mun, cPais2Pais, zip2xml } from "./utils/extras.js"
 
-export { Tools, Make, cUF2UF, UF2cUF, json2xml, xml2json, formatData, docZip, certInfo, cMun2Mun, cPais2Pais, zip2xml }
+export { Tools, Make, cUF2UF, UF2cUF, json2xml, xml2json, formatData, certInfo, cMun2Mun, cPais2Pais, zip2xml }

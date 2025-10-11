@@ -10,8 +10,11 @@ declare const urlEventos: {
             ParamConvenio: string;
             ParamAliquota: string;
             ParamHistoricoAliquotas: string;
+            ParamBefeniciarioMunicipal: string;
             ParamRetencoes: string;
+            ParamRetencoesAltera: string;
             ParamRegimesEspeciais: string;
+            ParamRegimesEspeciaisAltera: string;
             ParamBeneficio: string;
             LoteEnvio: string;
             LoteConsulta: string;
@@ -28,8 +31,11 @@ declare const urlEventos: {
             ParamConvenio: string;
             ParamAliquota: string;
             ParamHistoricoAliquotas: string;
+            ParamBefeniciarioMunicipal: string;
             ParamRetencoes: string;
+            ParamRetencoesAltera: string;
             ParamRegimesEspeciais: string;
+            ParamRegimesEspeciaisAltera: string;
             ParamBeneficio: string;
             LoteEnvio: string;
             LoteConsulta: string;
@@ -38,10 +44,4 @@ declare const urlEventos: {
         };
     };
 };
-declare const urlServicos: {
-    [key: string]: any;
-};
-declare const qrCodeUrls: {
-    [key: string]: any;
-};
-export { urlServicos, qrCodeUrls, urlEventos };
+export { urlEventos };

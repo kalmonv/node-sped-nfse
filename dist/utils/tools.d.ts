@@ -15,11 +15,18 @@ declare class Tools {
         senha: string;
     });
     gzipB64(xml: string): string;
-    checkConvenio(codMunicipal: string): Promise<any>;
+    alteraRetMunicipal(idManut: string): Promise<any>;
+    consultaRetMunicipal(competencia: string): Promise<any>;
+    alteraRegEspecial(idManut: string): Promise<any>;
+    consultaRegEspecial(codigoServico: string, competencia: string): Promise<any>;
+    alteraBenefMunic(numeroBeneficio: string, competencia: string): Promise<any>;
+    consultaBenefMunic(numeroBeneficio: string, competencia: string): Promise<any>;
+    consultaAlicotaHist(codigoServico: string): Promise<any>;
+    consultaAlicota(codigoServico: string, competencia: string): Promise<any>;
+    consultaConvenio(): Promise<any>;
     DFeEventos(chAcesso: string): Promise<any>;
     DFe(NSU: string): Promise<any>;
-    DPS(id: string): Promise<any>;
-    DPSVerifica(id: string): Promise<any>;
+    consultaDPS(id: string): Promise<any>;
     DANFSe(chAcesso: string): Promise<any>;
     enviarEvento({ chNFSe, tpEvento, xJust, nSeqEvento, dhEvento }: {
         chNFSe?: string | undefined;
@@ -28,7 +35,6 @@ declare class Tools {
         nSeqEvento?: number | undefined;
         dhEvento?: string | undefined;
     }): Promise<any>;
-    DPSConsulta(id: string): Promise<any>;
     enviarDPS(this: any, xml: string | string[]): Promise<any>;
     xmlSign(xmlJSON: string, data?: any): Promise<string>;
     getCertificado(): Promise<object>;

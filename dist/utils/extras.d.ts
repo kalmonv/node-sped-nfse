@@ -5824,6 +5824,5 @@ declare const xml2json: (xml: string) => Promise<object>;
 declare const json2xml: (obj: object) => Promise<string>;
 declare const formatData: (dataUsr?: Date) => string;
 declare const zip2xml: (docZipBase64: string) => string;
-declare const docZip: (xml: string, retorno?: string) => Promise<unknown>;
 declare const certInfo: (pfx: string, senha: string) => Promise<unknown>;
-export { cUF2UF, UF2cUF, json2xml, xml2json, formatData, docZip, certInfo, cMun2Mun, cPais2Pais, zip2xml };
+export { cUF2UF, UF2cUF, json2xml, xml2json, formatData, certInfo, cMun2Mun, cPais2Pais, zip2xml };
