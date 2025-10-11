@@ -11,8 +11,9 @@ Antes de começar, verifique se seu ambiente está preparado:
 
 - ✅ **Node.js** `v22.14.0` (versão testada e recomendada)
 - ✅ **xmllint / libxml**
-   Utilizado para validação e assinatura de XML.  
+   Utilizado para validação de xml.
 - ✅ **OpenSSL**  
+   Assinatura do xml.
 
   📚 Guia de instalação e uso:  
   👉 [Requisitos](https://github.com/kalmonv/node-sped-nfse/blob/main/docs/requisitos.md)

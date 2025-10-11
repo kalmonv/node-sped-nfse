@@ -8,14 +8,11 @@ A classe `Tools` é responsável por operações centrais da NF-e/NFC-e: geraç�
 
 ```ts
 const config = {
-  UF: 'SP', // Obrigatorio
-  tpAmb: 2, //1-Produçao, 2-Homologação
-  versao: '4.00', //Obrigatorio
+  tpAmb: 2, //1-Produçao, 2-Homologação - Obrigatorio
+  versao: '1.00', //Obrigatorio
   
-  mod: '55', //Obrigatorio, 65 ou 55
+  cOrgao: '5106240', //Códigos dos municípios IBGE
   timeout: 60,  //Optativo - Tempo limite de requisição
-
-  CNPJ|CPF: '00000000', //Optativo, uso somente no manifesto
 
   xmllint: '/usr/bin/xmllint.exe', //Optativo, caso sistema não tenha declarado nas variaveis.
   openssl: '/usr/bin/openssl.exe', //Optativo, caso sistema não tenha declarado nas variaveis.
