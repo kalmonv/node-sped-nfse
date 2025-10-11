@@ -35,23 +35,16 @@ import { Make, Tools } from "node-sped-nfse"
 import fs from "fs";
 
 let myTools = new Tools({ //Configuração de habiente e sistema
-    mod: 55,
-    tpAmb: 2,
-    cUF: 51,
-
-    /*
-        OPTATIVO!
-        LEIA Instalação do xmllint
-    */
-    xmllint: `../libxml2-2.9.3-win32-x86_64/bin/xmllint.exe`
+    tpAmb: 1,
+    cOrgao: '5106240',
+    versao: '1.00',
 }, { //Certificado digital
     pfx: 'certificado.pfx',
     senha: "senha-certificado",
 });
 ```
 
-> NOTA: Muitos campos não são obrigatórios. Caso não haja nenhum valor a ser informado, devem ser criados como NULL.
-> NOTA: Caso existam erros na passagem de parâmetros para a classe, será disparada uma Exception e esses erros poderão ser recuperados pelo método getErrors().
+> NOTA: Muitos campos não são obrigatórios. Caso não haja nenhum valor a ser informado, devem ser ignorados.
  
 
 # Métodos
