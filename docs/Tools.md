@@ -66,16 +66,11 @@ Converte uma string XML em um objeto JavaScript.
   }
 }
 ```
-## 📥 Método `sefazEnviaLote(xml: string, data: any = { idLote: 1, indSinc: 0, compactar: false }): Promise<string>`
-Este método é responsável por enviar um lote de NF-e ou NFC-e para a SEFAZ. Ele recebe um XML contendo a NF-e/NFC-e a ser transmitida, além de um objeto de configuração que define parâmetros adicionais para o envio.
+## 📥 Método `enviarDPS(xml: string }): Promise<string>`
+Este método é responsável por enviar DPS. Ele recebe um XML contendo a DPS a ser transmitida.
 ```ts
-let xml = "Conteudo da NFCe/NFe".
-let data = {
-    idLote: 1, //Identificador de controle do envio do lote. 
-    indSinc: 0, // 0 - Não, 1 = Sim || síncrono
-    compactar: false
-}
-tools.sefazEnviaLote(xml, data);
+let dps = " Conteudo ";
+tools.enviarDPS(xml);
 ```
 
 ## 📥 Método `async xmlSign(xmlJSON: string, data: any = { tag: "infNFe" }): Promise<string>`
