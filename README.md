@@ -59,6 +59,7 @@ Toda a documentação completa com guias, exemplos, integrações e muito mais e
 | Enviar Evento                                  | 🔴     |
 | Enviar Evento                                  | 🔴     |
 
+<br>
 
 | MUNICIPAL                                      | Status  |
 | ---------------------------------------------- | ------  |
