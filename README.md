@@ -54,4 +54,4 @@ Toda a documentação completa com guias, exemplos, integrações e muito mais e
 | Emissão de DPS                                 | ✅     |
 | DANFE (PDF da NFSe)                            | ✅     |
 | Consulta DPS/NFSe/NSU                          | ✅     |
-| Enviar Evento                                  | 🔴     |
+| Enviar Evento                                  | ✅     |
