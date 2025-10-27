@@ -1,61 +1,58 @@
+const SEFIN_HOMOLOGACAO = 'https://sefin.producaorestrita.nfse.gov.br/SefinNacional';
+const SEFIN_PRODUCAO = 'https://sefin.nfse.gov.br/sefinnacional';
+const ADN_HOMOLOGACAO = 'https://adn.producaorestrita.nfse.gov.br';
+const ADN_PRODUCAO = 'https://adn.nfse.gov.br';
+
 const urlEventos = {
     gov: {
-        homologacao: {
-            // SEFIN (Produção Restrita) — unitário e consultas oficiais
-            NFSeEnvio: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/nfse",
-            NFSeConsulta: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/nfse/{chAcesso}",
-            NFSeEventos: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/nfse/{chAcesso}/eventos", // POST (registro de evento)
-            NFSeConsultaEvento: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/nfse/{chAcesso}/eventos", // GET
-            DPSConsulta: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/dps/{id}",  // GET/HEAD
-            DANFSe: "https://sefin.producaorestrita.nfse.gov.br/danfse/{chAcesso}",
+        homologacao: { // ESPELHO -> https://www.nfse.gov.br/swagger/contribuintesissqn/#/
 
-            // Parâmetros Municipais (homolog)
-            ParamConvenio: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/convenio",
-            ParamAliquota: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{codigoServico}/{competencia}/aliquota",
-            ParamHistoricoAliquotas: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{codigoServico}/historicoaliquotas",
-            ParamBefeniciarioMunicipal: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{numeroBeneficio}/{competencia}/beneficio",
+            //NFSe -> PDF
+            DANFSe: `${ADN_HOMOLOGACAO}/danfse/{chAcesso}`, //GET
 
-            ParamRetencoes: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{competencia}/retencoes",
-            ParamRetencoesAltera: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/retencoes/{idManut}",
+            //Manifesto de evento
+            NFSeEvent: `${SEFIN_HOMOLOGACAO}/nfse/{chAcesso}/eventos`, //POST
 
-            ParamRegimesEspeciais: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{codigoServico}/{competencia}/regimes_especiais",
-            ParamRegimesEspeciaisAltera: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/regimes_especiais/{idManut}",
-            ParamBeneficio: "https://sefin.producaorestrita.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{numeroBeneficio}/{competencia}/beneficio",
+            //Distribuição de NFSe + Eventos
+            LoteConsulta: `${ADN_HOMOLOGACAO}/contribuinte/DFe/{NSU}`, //GET 404
 
-            // ADN (Produção Restrita) — lote e distribuição DF-e
-            LoteEnvio: "https://adn.producaorestrita.nfse.gov.br/dfe",
-            LoteConsulta: "https://adn.producaorestrita.nfse.gov.br/dfe/{nsuRecepcao}",
-            DFe: "https://adn.producaorestrita.nfse.gov.br/contribuinte/DFe/{NSU}",
-            DFeEventos: "https://adn.producaorestrita.nfse.gov.br/contribuinte/NFSe/{chAcesso}/Eventos"
+            //DPS
+            DPSConsulta: `${SEFIN_HOMOLOGACAO}/dps/{DPS}`, //GET
+            DPSCheck: `${SEFIN_HOMOLOGACAO}/dps/{DPS}`, //HEAD
+
+            // NFS-e
+            NFSeEnvio: `${SEFIN_HOMOLOGACAO}/nfse`, //POST
+            NFSeConsulta: `${SEFIN_HOMOLOGACAO}/nfse/{chAcesso}`, //GET
+
+            LoteEnvio: `${ADN_HOMOLOGACAO}/DFe/`, //POST
+            DFe: `${ADN_HOMOLOGACAO}/DFe/{NSU}`, //GET
+
+            MunConvenio : `${SEFIN_HOMOLOGACAO}/parametros_municipais/{cOrgao}/convenio` //GET
         },
 
-        producao: {
-            // Emissão e consultas oficiais
-            NFSeEnvio: "https://sefin.nfse.gov.br/sefinnacional/nfse",
-            NFSeConsulta: "https://sefin.nfse.gov.br/sefinnacional/nfse/{chAcesso}",
-            NFSeEventos: "https://sefin.nfse.gov.br/sefinnacional/nfse/{chAcesso}/eventos",
-            NFSeConsultaEvento: "https://sefin.nfse.gov.br/sefinnacional/nfse/{chAcesso}/eventos/{tipoEvento}/{numSeqEvento}",
-            DPSConsulta: "https://sefin.nfse.gov.br/sefinnacional/dps/{id}",
-            DANFSe: "https://adn.nfse.gov.br/danfse/{chAcesso}", //OKAY
+        producao: { // ESPELHO -> https://www.nfse.gov.br/swagger/contribuintesissqn/#/
 
-            // Parâmetros Municipais - https://sefin.nfse.gov.br/sefinnacional
-            ParamConvenio: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/convenio",
-            ParamAliquota: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{codigoServico}/{competencia}/aliquota",
-            ParamHistoricoAliquotas: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{codigoServico}/historicoaliquotas",
-            ParamBefeniciarioMunicipal: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/{numeroBeneficio}/{competencia}/beneficio",
+            //NFSe -> PDF
+            DANFSe: `${ADN_PRODUCAO}/danfse/{chAcesso}`, //GET
 
-            ParamRetencoes: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{competencia}/retencoes",
-            ParamRetencoesAltera: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/retencoes/{idManut}",
+            //Manifesto de evento
+            NFSeEvent: `${SEFIN_PRODUCAO}/nfse/{chAcesso}/eventos`, //POST
 
-            ParamRegimesEspeciais: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{codigoServico}/{competencia}/regimes_especiais",
-            ParamRegimesEspeciaisAltera: "https://adn.producaorestrita.nfse.gov.br/parametrizacao/{codigoMunicipio}/regimes_especiais/{idManut}",
-            ParamBeneficio: "https://sefin.nfse.gov.br/sefinnacional/parametros_municipais/{codigoMunicipio}/{numeroBeneficio}/{competencia}/beneficio",
+            //Distribuição de NFSe + Eventos
+            LoteConsulta: `${ADN_PRODUCAO}/contribuinte/DFe/{NSU}`, //GET 404
 
-            // Lote e distribuição DF-e
-            LoteEnvio: "https://adn.nfse.gov.br/DFe/",
-            LoteConsulta: "https://adn.nfse.gov.br/DFe/{UltimoNSU}",
-            DFe: "https://adn.nfse.gov.br/DFe/{NSU}",
-            DFeEventos: "https://sefin.nfse.gov.br/sefinnacional/nfse/{chAcesso}/eventos"
+            //DPS
+            DPSConsulta: `${SEFIN_PRODUCAO}/dps/{DPS}`, //GET
+            DPSCheck: `${SEFIN_PRODUCAO}/dps/{DPS}`, //HEAD
+
+            // NFS-e
+            NFSeEnvio: `${SEFIN_PRODUCAO}/nfse`, //POST
+            NFSeConsulta: `${SEFIN_PRODUCAO}/nfse/{chAcesso}`, //GET
+
+            LoteEnvio: `${ADN_PRODUCAO}/DFe/`, //POST
+            DFe: `${ADN_PRODUCAO}/DFe/{NSU}`, //GET
+
+            MunConvenio : `${SEFIN_PRODUCAO}/parametros_municipais/{cOrgao}/convenio` //GET
         }
     }
 };

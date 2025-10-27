@@ -1,46 +1,28 @@
 declare const urlEventos: {
     gov: {
         homologacao: {
+            DANFSe: string;
+            NFSeEvent: string;
+            LoteConsulta: string;
+            DPSConsulta: string;
+            DPSCheck: string;
             NFSeEnvio: string;
             NFSeConsulta: string;
-            NFSeEventos: string;
-            NFSeConsultaEvento: string;
-            DPSConsulta: string;
-            DANFSe: string;
-            ParamConvenio: string;
-            ParamAliquota: string;
-            ParamHistoricoAliquotas: string;
-            ParamBefeniciarioMunicipal: string;
-            ParamRetencoes: string;
-            ParamRetencoesAltera: string;
-            ParamRegimesEspeciais: string;
-            ParamRegimesEspeciaisAltera: string;
-            ParamBeneficio: string;
             LoteEnvio: string;
-            LoteConsulta: string;
             DFe: string;
-            DFeEventos: string;
+            MunConvenio: string;
         };
         producao: {
+            DANFSe: string;
+            NFSeEvent: string;
+            LoteConsulta: string;
+            DPSConsulta: string;
+            DPSCheck: string;
             NFSeEnvio: string;
             NFSeConsulta: string;
-            NFSeEventos: string;
-            NFSeConsultaEvento: string;
-            DPSConsulta: string;
-            DANFSe: string;
-            ParamConvenio: string;
-            ParamAliquota: string;
-            ParamHistoricoAliquotas: string;
-            ParamBefeniciarioMunicipal: string;
-            ParamRetencoes: string;
-            ParamRetencoesAltera: string;
-            ParamRegimesEspeciais: string;
-            ParamRegimesEspeciaisAltera: string;
-            ParamBeneficio: string;
             LoteEnvio: string;
-            LoteConsulta: string;
             DFe: string;
-            DFeEventos: string;
+            MunConvenio: string;
         };
     };
 };

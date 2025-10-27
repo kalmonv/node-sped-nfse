@@ -323,7 +323,7 @@ class Make {
             ignoreAttributes: false,
             attributeNamePrefix: "@"
         });
-        return `<?xml version="1.0" encoding="UTF-8"?>` + tempBuild.build({ DPS: __classPrivateFieldGet(this, _Make_DPS, "f") });
+        return `<?xml version="1.0" encoding="utf-8" ?>` + tempBuild.build({ DPS: __classPrivateFieldGet(this, _Make_DPS, "f") });
     }
 }
 _Make_DPS = new WeakMap(), _Make_ICMSTot = new WeakMap(), _Make_instances = new WeakSet(), _Make_gerarChaveNFe = function _Make_gerarChaveNFe() {

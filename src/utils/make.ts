@@ -382,7 +382,7 @@ class Make {
             ignoreAttributes: false,
             attributeNamePrefix: "@"
         });
-        return `<?xml version="1.0" encoding="UTF-8"?>`+tempBuild.build({ DPS: this.#DPS });
+        return `<?xml version="1.0" encoding="utf-8" ?>`+tempBuild.build({ DPS: this.#DPS });
     }
 
     //Obtem os dados de importo e soma no total, utlizado sempre que for setado algum imposto.

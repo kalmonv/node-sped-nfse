@@ -9,11 +9,10 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _Tools_instances, _Tools_cert, _Tools_pem, _Tools_config, _Tools_getSignature, _Tools_gerarQRCodeNFCe, _Tools_xmlValido, _Tools_certTools, _Tools_limparSoap;
+var _Tools_instances, _Tools_cert, _Tools_pem, _Tools_config, _Tools_gzipB64, _Tools_xmlValido, _Tools_certTools, _Tools_limparSoap;
 import https from "https";
 import { spawnSync } from "child_process";
 import tmp from "tmp";
-import crypto from "crypto";
 import { urlEventos } from "./eventos.js";
 import fs from "fs";
 import path from 'path';
@@ -51,357 +50,24 @@ class Tools {
         __classPrivateFieldSet(this, _Tools_config, config, "f");
         __classPrivateFieldSet(this, _Tools_cert, certificado, "f");
     }
-    gzipB64(xml) {
-        const gz = zlib.gzipSync(Buffer.from(xml, 'utf-8'));
-        return gz.toString('base64');
-    }
-    // -----------------------------------   Parâmetros Municipais -----------------------------------------
-    async alteraRetMunicipal(idManut) {
+    async enviarDPS(xml) {
+        const isLote = Array.isArray(xml);
+        // >>> IMPORTANTÍSSIMO: deixe NFSeEnvio apontar pro SEFIN (não pro ADN)
+        // Ex.: this.urlEventos.gov.homologacao.NFSeEnvio = 'https://sefin.nfse.gov.br/sefinnacional/nfse'
+        const url = isLote
+            ? (urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.LoteEnvio)
+            : (urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.NFSeEnvio);
+        const body = isLote
+            ? { LoteXmlGZipB64: xml.map(__classPrivateFieldGet(this, _Tools_instances, "m", _Tools_gzipB64)) }
+            : { dpsXmlGZipB64: __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_gzipB64).call(this, xml) };
+        const payload = JSON.stringify(body);
         return new Promise(async (resolve, reject) => {
-            if (__classPrivateFieldGet(this, _Tools_config, "f").cOrgao == undefined)
-                return reject("Tools({..., cOrgao }) Delcaração faltando.");
-            return reject("Tools.alteraRetMunicipal() - Não implementado!");
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRegimesEspeciaisAltera.replace("{codigoMunicipio}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao).replace("{idManut}", idManut), {
+            const req = https.request(url, {
                 method: 'POST',
                 headers: {
-                    'Accept': 'application/json',
-                },
-                // ideal: true em produção; você havia desativado a verificação
-                rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
-                res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
-                    try {
-                        resolve(JSON.parse(data));
-                    }
-                    catch {
-                        resolve(data);
-                    }
-                });
-            });
-            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
-            req.end();
-        });
-    }
-    async consultaRetMunicipal(competencia) {
-        return new Promise(async (resolve, reject) => {
-            if (__classPrivateFieldGet(this, _Tools_config, "f").cOrgao == undefined)
-                return reject("Tools({..., cOrgao }) Delcaração faltando.");
-            console.log(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRetencoes.replace("{codigoMunicipio}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao).replace("{competencia}", competencia));
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRetencoes.replace("{codigoMunicipio}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao).replace("{competencia}", competencia), {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                // ideal: true em produção; você havia desativado a verificação
-                rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
-                res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
-                    try {
-                        resolve(JSON.parse(data));
-                    }
-                    catch {
-                        resolve(data);
-                    }
-                });
-            });
-            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
-            req.end();
-        });
-    }
-    async alteraRegEspecial(idManut) {
-        return new Promise(async (resolve, reject) => {
-            if (__classPrivateFieldGet(this, _Tools_config, "f").cOrgao == undefined)
-                return reject("Tools({..., cOrgao }) Delcaração faltando.");
-            return reject("Tools.alteraRegEspecial() - Não implementado!");
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRegimesEspeciaisAltera.replace("{codigoMunicipio}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao).replace("{idManut}", idManut), {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                // ideal: true em produção; você havia desativado a verificação
-                rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
-                res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
-                    try {
-                        resolve(JSON.parse(data));
-                    }
-                    catch {
-                        resolve(data);
-                    }
-                });
-            });
-            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
-            req.end();
-        });
-    }
-    async consultaRegEspecial(codigoServico, competencia) {
-        return new Promise(async (resolve, reject) => {
-            if (__classPrivateFieldGet(this, _Tools_config, "f").cOrgao == undefined)
-                return reject("Tools({..., cOrgao }) Delcaração faltando.");
-            console.log(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRegimesEspeciais.replace("{codigoMunicipio}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao).replace("{codigoServico}", String(codigoServico).replace(/\D/g, '').padStart(9, '0').replace(/^(\d{2})(\d{2})(\d{2})(\d{3})$/, '$1.$2.$3.$4')).replace("{competencia}", competencia));
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamRegimesEspeciais.replace("{codigoMunicipio}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao).replace("{codigoServico}", String(codigoServico).replace(/\D/g, '').padStart(9, '0').replace(/^(\d{2})(\d{2})(\d{2})(\d{3})$/, '$1.$2.$3.$4')).replace("{competencia}", competencia), {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                // ideal: true em produção; você havia desativado a verificação
-                rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
-                res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
-                    try {
-                        resolve(JSON.parse(data));
-                    }
-                    catch {
-                        resolve(data);
-                    }
-                });
-            });
-            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
-            req.end();
-        });
-    }
-    async alteraBenefMunic(numeroBeneficio, competencia) {
-        return new Promise(async (resolve, reject) => {
-            if (__classPrivateFieldGet(this, _Tools_config, "f").cOrgao == undefined)
-                return reject("Tools({..., cOrgao }) Delcaração faltando.");
-            return reject("Tools.alteraBenefMunic() - Não implementado!");
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamBefeniciarioMunicipal.replace("{codigoMunicipio}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao).replace("{numeroBeneficio}", numeroBeneficio).replace("{competencia}", competencia), {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                // ideal: true em produção; você havia desativado a verificação
-                rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
-                res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
-                    try {
-                        resolve(JSON.parse(data));
-                    }
-                    catch {
-                        resolve(data);
-                    }
-                });
-            });
-            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
-            req.end();
-        });
-    }
-    async consultaBenefMunic(numeroBeneficio, competencia) {
-        return new Promise(async (resolve, reject) => {
-            if (__classPrivateFieldGet(this, _Tools_config, "f").cOrgao == undefined)
-                return reject("Tools({..., cOrgao }) Delcaração faltando.");
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamBefeniciarioMunicipal.replace("{codigoMunicipio}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao).replace("{numeroBeneficio}", numeroBeneficio).replace("{competencia}", competencia), {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                // ideal: true em produção; você havia desativado a verificação
-                rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
-                res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
-                    try {
-                        resolve(JSON.parse(data));
-                    }
-                    catch {
-                        resolve(data);
-                    }
-                });
-            });
-            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
-            req.end();
-        });
-    }
-    async consultaAlicotaHist(codigoServico) {
-        return new Promise(async (resolve, reject) => {
-            if (__classPrivateFieldGet(this, _Tools_config, "f").cOrgao == undefined)
-                return reject("Tools({..., cOrgao }) Delcaração faltando.");
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamHistoricoAliquotas.replace("{codigoMunicipio}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao).replace("{codigoServico}", String(codigoServico).replace(/\D/g, '').padStart(9, '0').replace(/^(\d{2})(\d{2})(\d{2})(\d{3})$/, '$1.$2.$3.$4')), {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                // ideal: true em produção; você havia desativado a verificação
-                rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
-                res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
-                    try {
-                        resolve(JSON.parse(data));
-                    }
-                    catch {
-                        resolve(data);
-                    }
-                });
-            });
-            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
-            req.end();
-        });
-    }
-    async consultaAlicota(codigoServico, competencia) {
-        return new Promise(async (resolve, reject) => {
-            if (__classPrivateFieldGet(this, _Tools_config, "f").cOrgao == undefined)
-                return reject("Tools({..., cOrgao }) Delcaração faltando.");
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamAliquota.replace("{codigoMunicipio}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao).replace("{codigoServico}", String(codigoServico).replace(/\D/g, '').padStart(9, '0').replace(/^(\d{2})(\d{2})(\d{2})(\d{3})$/, '$1.$2.$3.$4')).replace("{competencia}", competencia), {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                // ideal: true em produção; você havia desativado a verificação
-                rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
-                res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
-                    try {
-                        resolve(JSON.parse(data));
-                    }
-                    catch {
-                        resolve(data);
-                    }
-                });
-            });
-            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
-            req.end();
-        });
-    }
-    async consultaConvenio() {
-        return new Promise(async (resolve, reject) => {
-            if (__classPrivateFieldGet(this, _Tools_config, "f").cOrgao == undefined)
-                return reject("Tools({..., cOrgao }) Delcaração faltando.");
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.ParamConvenio.replace("{codigoMunicipio}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao), {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                // ideal: true em produção; você havia desativado a verificação
-                rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
-                res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
-                    try {
-                        resolve(JSON.parse(data));
-                    }
-                    catch {
-                        resolve(data);
-                    }
-                });
-            });
-            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
-            req.end();
-        });
-    }
-    // -----------------------------------   Parâmetros Municipais -----------------------------------------
-    async DFeEventos(chAcesso) {
-        return new Promise(async (resolve, reject) => {
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.DFeEventos.replace("{chAcesso}", chAcesso), {
-                method: 'GET',
-                headers: {
                     'Content-Type': 'application/json; charset=utf-8',
                     'Accept': 'application/json',
+                    'Content-Length': Buffer.byteLength(payload).toString()
                 },
                 // ideal: true em produção; você havia desativado a verificação
                 rejectUnauthorized: false,
@@ -428,78 +94,7 @@ class Tools {
             });
             req.on('timeout', () => req.destroy(new Error('Timeout')));
             req.on('error', reject);
-            req.end();
-        });
-    }
-    async DFe(NSU) {
-        return new Promise(async (resolve, reject) => {
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.DFe.replace("{NSU}", NSU), {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    'Accept': 'application/json',
-                },
-                // ideal: true em produção; você havia desativado a verificação
-                rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
-                res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
-                    try {
-                        resolve(JSON.parse(data));
-                    }
-                    catch {
-                        resolve(data);
-                    }
-                });
-            });
-            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
-            req.end();
-        });
-    }
-    async consultaDPS(id) {
-        return new Promise(async (resolve, reject) => {
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.DPSConsulta.replace("{id}", id), {
-                method: 'HEAD',
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    'Accept': 'application/json',
-                },
-                // ideal: true em produção; você havia desativado a verificação
-                rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
-                res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
-                    try {
-                        resolve(JSON.parse(data));
-                    }
-                    catch {
-                        resolve(data);
-                    }
-                });
-            });
-            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
-            });
-            req.on('timeout', () => req.destroy(new Error('Timeout')));
-            req.on('error', reject);
+            req.write(payload);
             req.end();
         });
     }
@@ -545,51 +140,145 @@ class Tools {
             req.end();
         });
     }
-    async enviarEvento({ chNFSe = "", tpEvento = "", xJust = "", nSeqEvento = 1, dhEvento = formatData() }) {
+    async consulta({ NSU = "", DPS = "", chAcesso = "", verifDPS = "" } = {}) {
+        return new Promise(async (resolve, reject) => {
+            let url = "", method = "GET";
+            if (NSU != "") {
+                url = urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.LoteConsulta.replace("{NSU}", NSU);
+            }
+            else if (DPS != "") {
+                url = urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.DPSConsulta.replace("{DPS}", DPS);
+            }
+            else if (chAcesso != "") {
+                url = urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.NFSeConsulta.replace("{chAcesso}", chAcesso);
+            }
+            else if (verifDPS != "") {
+                url = urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.DPSCheck.replace("{DPS}", verifDPS);
+                method = "HEAD";
+            }
+            const req = https.request(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Accept': 'application/json',
+                },
+                // ideal: true em produção; você havia desativado a verificação
+                rejectUnauthorized: false,
+                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
+            }, (res) => {
+                let data = '';
+                res.on('data', (chunk) => (data += chunk));
+                res.on('end', () => {
+                    console.log(url);
+                    console.log(res.statusCode);
+                    // tente parsear JSON; se falhar, devolve string
+                    try {
+                        resolve(JSON.parse(data));
+                    }
+                    catch {
+                        resolve(data);
+                    }
+                });
+            });
+            req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
+                reject({
+                    name: 'TimeoutError',
+                    message: 'The operation was aborted due to timeout'
+                });
+                req.destroy(); // cancela a requisição
+            });
+            req.on('timeout', () => req.destroy(new Error('Timeout')));
+            req.on('error', reject);
+            req.end();
+        });
+    }
+    async enviarEvento({ chNFSe = "", tpEvento = "", dhEvento = formatData(), id = "", xDesc = "", cMotivo = "", xMotivo = "", chSubstituta = "", CPFAgTrib = "", nProcAdm = "", idEvManifRej = "", xProcAdm = "", cEvtNFSe = "", idBloqOfic = "", nPedRegEvento = "1" }) {
         return new Promise(async (resolve, reject) => {
             if (typeof __classPrivateFieldGet(this, _Tools_config, "f").cOrgao == "undefined")
                 reject("Tools({...,cOrgao:?}): cOrgao não definido!");
             if (typeof __classPrivateFieldGet(this, _Tools_config, "f").CNPJ == "undefined" && typeof __classPrivateFieldGet(this, _Tools_config, "f").CPF == "undefined")
                 reject("Tools({...,CPF|CNPJ:?}): CPF|CNPJ não definido!");
+            nPedRegEvento = ("000" + nPedRegEvento).slice(-3);
+            if (id == "")
+                id = `PRE${chNFSe}${tpEvento}${nPedRegEvento}`;
+            const funcEvent = () => {
+                // mapa interno: tpEvento -> xDesc oficial
+                const XDESC_BY_EVENT = {
+                    101101: 'Cancelamento de NFS-e',
+                    101103: 'Solicitação de Análise Fiscal para Cancelamento de NFS-e',
+                    105102: 'Cancelamento de NFS-e por Substituição',
+                    105104: 'Cancelamento de NFS-e Deferido por Análise Fiscal',
+                    105105: 'Cancelamento de NFS-e Indeferido por Análise Fiscal',
+                    202201: 'Manifestação de NFS-e - Confirmação do Prestador',
+                    202205: 'Manifestação de NFS-e - Rejeição do Prestador',
+                    203202: 'Manifestação de NFS-e - Confirmação do Tomador',
+                    203206: 'Manifestação de NFS-e - Rejeição do Tomador',
+                    204203: 'Manifestação de NFS-e - Confirmação do Intermediário',
+                    204207: 'Manifestação de NFS-e - Rejeição do Intermediário',
+                    205204: 'Manifestação de NFS-e - Confirmação Tácita',
+                    205208: 'Manifestação de NFS-e - Anulação da Rejeição',
+                    305101: 'Cancelamento de NFS-e por Ofício',
+                    305102: 'Bloqueio de NFS-e por Ofício',
+                    305103: 'Desbloqueio de NFS-e por Ofício',
+                };
+                // usa o xDesc do mapa; se não houver, cai no xDesc já existente no escopo
+                const _xDesc = XDESC_BY_EVENT[tpEvento] ?? xDesc;
+                if (!_xDesc)
+                    return {};
+                switch (tpEvento) {
+                    case '101101':
+                    case '101103':
+                    case '202205':
+                    case '203206':
+                    case '204207':
+                        return { [`e${tpEvento}`]: { xDesc: _xDesc, cMotivo, xMotivo } };
+                    case '105102':
+                        return { [`e${tpEvento}`]: { xDesc: _xDesc, cMotivo, xMotivo, chSubstituta } };
+                    case '105104':
+                    case '105105':
+                        return { [`e${tpEvento}`]: { xDesc: _xDesc, CPFAgTrib, nProcAdm, cMotivo, xMotivo } };
+                    case '202201':
+                    case '203202':
+                    case '204203':
+                        return { [`e${tpEvento}`]: { xDesc: _xDesc } };
+                    case '205204':
+                        return { [`e${tpEvento}`]: { xDesc: _xDesc, CPFAgTrib } };
+                    case '205208':
+                        return { [`e${tpEvento}`]: { xDesc: _xDesc, CPFAgTrib, idEvManifRej, xMotivo } };
+                    case '305101':
+                        return { [`e${tpEvento}`]: { xDesc: _xDesc, CPFAgTrib, nProcAdm, xProcAdm } };
+                    case '305102':
+                        return { [`e${tpEvento}`]: { xDesc: _xDesc, CPFAgTrib, xMotivo, cEvtNFSe } };
+                    case '305103':
+                        return { [`e${tpEvento}`]: { xDesc: _xDesc, CPFAgTrib, idBloqOfic } };
+                    default:
+                        return {};
+                }
+            };
             var evento = {
-                eventoNfse: {
-                    infEvento: {
+                pedRegEvento: {
+                    infPedReg: {
+                        "@Id": id,
                         tpAmb: __classPrivateFieldGet(this, _Tools_config, "f").tpAmb,
-                        cOrgao: __classPrivateFieldGet(this, _Tools_config, "f").cOrgao,
-                        emit: {
-                            ...(__classPrivateFieldGet(this, _Tools_config, "f").CNPJ != undefined ? {
-                                CNPJ: __classPrivateFieldGet(this, _Tools_config, "f").CNPJ,
-                            } : {
-                                CPF: __classPrivateFieldGet(this, _Tools_config, "f").CPF,
-                            }),
-                            ...(__classPrivateFieldGet(this, _Tools_config, "f").IM != undefined ? {
-                                CNPJ: __classPrivateFieldGet(this, _Tools_config, "f").IM,
-                            } : {})
-                        },
-                        nfse: {
-                            chNFSe
-                        },
+                        verAplic: "SefinNacional_1.4.0",
                         dhEvento,
-                        tpEvento,
-                        nSeqEvento,
-                        verEvento: "1.00",
-                        detEvento: {
-                            descEvento: (tpEvento == "e101101" ? "Cancelamento da NFS-e" : "Cancelamento por Substituição"),
-                            xJust: xJust,
-                            "@versao": "1.00"
-                        },
-                        "@Id": `ID${tpEvento}${chNFSe}${nSeqEvento}`
+                        ...(typeof __classPrivateFieldGet(this, _Tools_config, "f").CNPJ == "undefined" ? { CPFAutor: __classPrivateFieldGet(this, _Tools_config, "f").CPF } : { CNPJAutor: __classPrivateFieldGet(this, _Tools_config, "f").CNPJ }),
+                        chNFSe,
+                        nPedRegEvento,
+                        ...(funcEvent())
                     },
-                    "@xmlns": "urn:br:gov:snnfse:evento",
+                    "@xmlns": "http://www.sped.fazenda.gov.br/nfse",
                     "@versao": "1.00"
                 }
             };
             var xml = `<?xml version="1.0" encoding="UTF-8"?>` + await json2xml(evento);
-            xml = await this.xmlSign(xml, { tag: "infEvento" });
+            xml = await this.xmlSign(xml, "infPedReg");
+            fs.writeFileSync("./testes/evento.xml", xml, { encoding: "utf8" });
+            await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_xmlValido).call(this, xml, `pedRegEvento_v${__classPrivateFieldGet(this, _Tools_config, "f").versao}`).catch(reject);
             const payload = JSON.stringify({
-                pedidoRegistroEventoXmlGZipB64: this.gzipB64(xml)
+                pedidoRegistroEventoXmlGZipB64: __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_gzipB64).call(this, xml)
             });
-            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.NFSeEventos.replace("{chAcesso}", chNFSe), {
+            const req = https.request(urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.NFSeEvent.replace("{chAcesso}", chNFSe), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json; charset=utf-8',
@@ -625,72 +314,87 @@ class Tools {
             req.end();
         });
     }
-    async enviarDPS(xml) {
-        const isLote = Array.isArray(xml);
-        // >>> IMPORTANTÍSSIMO: deixe NFSeEnvio apontar pro SEFIN (não pro ADN)
-        // Ex.: this.urlEventos.gov.homologacao.NFSeEnvio = 'https://sefin.nfse.gov.br/sefinnacional/nfse'
-        const url = isLote
-            ? (urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.LoteEnvio)
-            : (urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.NFSeEnvio);
-        const body = isLote
-            ? { LoteXmlGZipB64: xml.map(this.gzipB64) }
-            : { dpsXmlGZipB64: this.gzipB64(xml) };
-        const payload = JSON.stringify(body);
+    async consultaConvenio() {
         return new Promise(async (resolve, reject) => {
+            const url = urlEventos?.gov?.[__classPrivateFieldGet(this, _Tools_config, "f")?.tpAmb == 1 ? 'producao' : 'homologacao']?.MunConvenio.replace("{cOrgao}", __classPrivateFieldGet(this, _Tools_config, "f").cOrgao);
+            console.log(url);
             const req = https.request(url, {
-                method: 'POST',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json; charset=utf-8',
                     'Accept': 'application/json',
-                    'Content-Length': Buffer.byteLength(payload).toString()
                 },
-                // ideal: true em produção; você havia desativado a verificação
+                // ideal: true em produção; aqui você havia desativado
                 rejectUnauthorized: false,
-                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS: cert/ key ou pfx/passphrase
+                ...(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this)) // mTLS
             }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => (data += chunk));
+                const chunks = [];
+                res.on('data', (chunk) => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
                 res.on('end', () => {
-                    // tente parsear JSON; se falhar, devolve string
+                    const buf = Buffer.concat(chunks);
+                    const ctype = (res.headers['content-type'] || '').toLowerCase();
+                    // Se veio PDF, devolve o Buffer do PDF
+                    if (res.statusCode === 200 && ctype.includes('application/pdf') && buf.length > 0) {
+                        return resolve(buf); // quem chamar decide salvar em arquivo
+                    }
+                    // Tenta interpretar como JSON (ex.: erro de negócio)
                     try {
-                        resolve(JSON.parse(data));
+                        const json = JSON.parse(buf.toString('utf8'));
+                        return resolve(json);
                     }
                     catch {
-                        resolve(data);
+                        // Devolve texto bruto (ex.: HTML de erro/IIS 501 sem corpo)
+                        return resolve(buf.toString('utf8'));
                     }
                 });
             });
             req.setTimeout(__classPrivateFieldGet(this, _Tools_config, "f").timeout * 1000, () => {
-                reject({
-                    name: 'TimeoutError',
-                    message: 'The operation was aborted due to timeout'
-                });
-                req.destroy(); // cancela a requisição
+                reject({ name: 'TimeoutError', message: 'The operation was aborted due to timeout' });
+                req.destroy();
             });
             req.on('timeout', () => req.destroy(new Error('Timeout')));
             req.on('error', reject);
-            req.write(payload);
             req.end();
         });
     }
-    async xmlSign(xmlJSON, data = { tag: "infDPS" }) {
+    //Responsavel por gerar assinatura
+    async xmlSign(xmlJSON, tag = "infDPS") {
         return new Promise(async (resvol, reject) => {
-            if (data.tag === undefined)
-                data.tag = "infDPS";
-            var xml = await xml2json(xmlJSON);
-            if (data.tag == "infDPS") {
-                xml.DPS = {
-                    ...xml.DPS,
-                    ...await xml2json(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_getSignature).call(this, xmlJSON, data.tag))
-                };
+            try {
+                let tempPem = await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this);
+                const sig = new SignedXml({
+                    privateKey: tempPem.key,
+                    canonicalizationAlgorithm: 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315',
+                    signatureAlgorithm: 'http://www.w3.org/2000/09/xmldsig#rsa-sha1',
+                    publicCert: tempPem.pem,
+                    getKeyInfoContent: (args) => {
+                        const cert = tempPem.cert
+                            .toString()
+                            .replace('-----BEGIN CERTIFICATE-----', '')
+                            .replace('-----END CERTIFICATE-----', '')
+                            .replace(/\r?\n|\r/g, '');
+                        return `<X509Data><X509Certificate>${cert}</X509Certificate></X509Data>`;
+                    }
+                });
+                sig.addReference({
+                    xpath: `//*[local-name(.)='${tag}']`,
+                    transforms: [
+                        'http://www.w3.org/2000/09/xmldsig#enveloped-signature',
+                        'http://www.w3.org/TR/2001/REC-xml-c14n-20010315'
+                    ],
+                    digestAlgorithm: 'http://www.w3.org/2000/09/xmldsig#sha1'
+                });
+                sig.computeSignature(xmlJSON, {
+                    location: {
+                        reference: `//*[local-name()='${tag}']`,
+                        action: 'after' // <- insere DENTRO da tag <evento>
+                    }
+                });
+                return resvol(sig.getSignedXml());
             }
-            else if (data.tag == "infEvento") {
-                xml.envEvento.evento = {
-                    ...xml.envEvento.evento,
-                    ...(await xml2json(await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_getSignature).call(this, xmlJSON, data.tag)))
-                };
+            catch (error) {
+                reject(error);
             }
-            resvol(await json2xml(xml));
         });
     }
     //Obter certificado 
@@ -699,58 +403,15 @@ class Tools {
             __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this).then(resvol).catch(reject);
         });
     }
-    async validarXML(xml, el = "DPS") {
+    async validarXML(xml, schema = "DPS") {
         return new Promise((resolve, reject) => {
-            __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_xmlValido).call(this, xml, `${el}_v${__classPrivateFieldGet(this, _Tools_config, "f").versao}`).then(resolve).catch(reject);
+            __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_xmlValido).call(this, xml, `${schema}_v${__classPrivateFieldGet(this, _Tools_config, "f").versao}`).then(resolve).catch(reject);
         });
     }
 }
-_Tools_cert = new WeakMap(), _Tools_pem = new WeakMap(), _Tools_config = new WeakMap(), _Tools_instances = new WeakSet(), _Tools_getSignature = 
-//Responsavel por gerar assinatura
-async function _Tools_getSignature(xmlJSON, tag) {
-    return new Promise(async (resvol, reject) => {
-        let tempPem = await __classPrivateFieldGet(this, _Tools_instances, "m", _Tools_certTools).call(this);
-        const sig = new SignedXml({
-            privateKey: tempPem.key,
-            canonicalizationAlgorithm: 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315',
-            signatureAlgorithm: 'http://www.w3.org/2000/09/xmldsig#rsa-sha1',
-            publicCert: tempPem.pem,
-            getKeyInfoContent: (args) => {
-                const cert = tempPem.cert
-                    .toString()
-                    .replace('-----BEGIN CERTIFICATE-----', '')
-                    .replace('-----END CERTIFICATE-----', '')
-                    .replace(/\r?\n|\r/g, '');
-                return `<X509Data><X509Certificate>${cert}</X509Certificate></X509Data>`;
-            }
-        });
-        sig.addReference({
-            xpath: `//*[local-name(.)='${tag}']`,
-            transforms: [
-                'http://www.w3.org/2000/09/xmldsig#enveloped-signature',
-                'http://www.w3.org/TR/2001/REC-xml-c14n-20010315'
-            ],
-            digestAlgorithm: 'http://www.w3.org/2000/09/xmldsig#sha1'
-        });
-        sig.computeSignature(xmlJSON, {
-            location: {
-                reference: `//*[local-name()='${tag}']`,
-                action: 'after' // <- insere DENTRO da tag <evento>
-            }
-        });
-        return resvol(sig.getSignatureXml());
-    });
-}, _Tools_gerarQRCodeNFCe = function _Tools_gerarQRCodeNFCe(NFe, versaoQRCode = "2", idCSC, CSC) {
-    let s = '|', concat, hash;
-    if (NFe.infNFe.ide.tpEmis == 1) {
-        concat = [NFe.infNFe['@Id'].replace("NFe", ""), versaoQRCode, NFe.infNFe.ide.tpAmb, Number(idCSC)].join(s);
-    }
-    else {
-        let hexDigestValue = Buffer.from(NFe.Signature.SignedInfo.Reference.DigestValue).toString('hex');
-        concat = [NFe.infNFe['@Id'].replace("NFe", ""), versaoQRCode, NFe.infNFe.ide.tpAmb, NFe.infNFe.ide.dhEmi, NFe.infNFe.total.ICMSTot.vNF, hexDigestValue, Number(idCSC)].join(s);
-    }
-    hash = crypto.createHash('sha1').update(concat + CSC).digest('hex');
-    return NFe.infNFeSupl.qrCode + '?p=' + concat + s + hash;
+_Tools_cert = new WeakMap(), _Tools_pem = new WeakMap(), _Tools_config = new WeakMap(), _Tools_instances = new WeakSet(), _Tools_gzipB64 = function _Tools_gzipB64(xml) {
+    const gz = zlib.gzipSync(Buffer.from(xml, 'utf-8'));
+    return gz.toString('base64');
 }, _Tools_xmlValido = 
 //Validar XML da NFe, somente apos assinar
 async function _Tools_xmlValido(xml, xsd) {

@@ -1,3 +1,9 @@
+type typeConsulta = {
+    NSU?: string;
+    DPS?: string;
+    chAcesso?: string;
+    verifDPS?: string;
+};
 declare class Tools {
     #private;
     constructor(config?: {
@@ -14,30 +20,29 @@ declare class Tools {
         pfx: string;
         senha: string;
     });
-    gzipB64(xml: string): string;
-    alteraRetMunicipal(idManut: string): Promise<any>;
-    consultaRetMunicipal(competencia: string): Promise<any>;
-    alteraRegEspecial(idManut: string): Promise<any>;
-    consultaRegEspecial(codigoServico: string, competencia: string): Promise<any>;
-    alteraBenefMunic(numeroBeneficio: string, competencia: string): Promise<any>;
-    consultaBenefMunic(numeroBeneficio: string, competencia: string): Promise<any>;
-    consultaAlicotaHist(codigoServico: string): Promise<any>;
-    consultaAlicota(codigoServico: string, competencia: string): Promise<any>;
-    consultaConvenio(): Promise<any>;
-    DFeEventos(chAcesso: string): Promise<any>;
-    DFe(NSU: string): Promise<any>;
-    consultaDPS(id: string): Promise<any>;
+    enviarDPS(this: any, xml: string | string[]): Promise<any>;
     DANFSe(chAcesso: string): Promise<any>;
-    enviarEvento({ chNFSe, tpEvento, xJust, nSeqEvento, dhEvento }: {
+    consulta({ NSU, DPS, chAcesso, verifDPS }?: typeConsulta): Promise<any>;
+    enviarEvento({ chNFSe, tpEvento, dhEvento, id, xDesc, cMotivo, xMotivo, chSubstituta, CPFAgTrib, nProcAdm, idEvManifRej, xProcAdm, cEvtNFSe, idBloqOfic, nPedRegEvento }: {
         chNFSe?: string | undefined;
         tpEvento?: string | undefined;
-        xJust?: string | undefined;
-        nSeqEvento?: number | undefined;
         dhEvento?: string | undefined;
+        id?: string | undefined;
+        xDesc?: string | undefined;
+        cMotivo?: string | undefined;
+        xMotivo?: string | undefined;
+        chSubstituta?: string | undefined;
+        CPFAgTrib?: string | undefined;
+        nProcAdm?: string | undefined;
+        idEvManifRej?: string | undefined;
+        xProcAdm?: string | undefined;
+        cEvtNFSe?: string | undefined;
+        idBloqOfic?: string | undefined;
+        nPedRegEvento?: string | undefined;
     }): Promise<any>;
-    enviarDPS(this: any, xml: string | string[]): Promise<any>;
-    xmlSign(xmlJSON: string, data?: any): Promise<string>;
+    consultaConvenio(): Promise<any>;
+    xmlSign(xmlJSON: string, tag?: string): Promise<string>;
     getCertificado(): Promise<object>;
-    validarXML(xml: string, el?: string): Promise<any>;
+    validarXML(xml: string, schema?: string): Promise<any>;
 }
 export { Tools };

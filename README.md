@@ -53,22 +53,5 @@ Toda a documentação completa com guias, exemplos, integrações e muito mais e
 | Gerar XML DPS                                  | ✅     |
 | Emissão de DPS                                 | ✅     |
 | DANFE (PDF da NFSe)                            | ✅     |
-| Consulta Eventos de NFSe                       | ✅     |
-| Consulta NFSe emitidas contra CNPJ/CPF         | ✅     |
-| Consulta DPS                                   | ✅     |
+| Consulta DPS/NFSe/NSU                          | ✅     |
 | Enviar Evento                                  | 🔴     |
-| Enviar Evento                                  | 🔴     |
-
-<br>
-
-| MUNICIPAL                                      | Status  |
-| ---------------------------------------------- | ------  |
-| Consulta Retenção Municipal                    | ✅      |
-| Altera Retenção Municipal                      | 🔴      |
-| Consulta Regime Especial                       | ✅      |
-| Altera Regime Especial                         | 🔴      |
-| Consulta Beneficiario Municipal                | ✅      |
-| Altera Beneficiario Municipal                  | 🔴      |
-| Consulta Alicota                               | ✅      |
-| Consulta Historico de Alicota                  | ✅      |
-| Consulta Convenio                              | ✅      |

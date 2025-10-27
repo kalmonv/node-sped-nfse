@@ -21,110 +21,218 @@ const certificado = {
   pfx: fs.readFileSync('./certs/empresa.pfx'),  // (Buffer | String path) Obrigatorio, caminho para o arquivo .pfx
   senha: 'minhasenha123'                        //Obrigatorio, senha do certificado digital
 };
-const tools = new Tools(config, certificado);
+const myTools = new Tools(config, certificado);
 ```
 
-## 📥 Método `xml2json(xml: string): Promise<object>`
-## 📥 Método `json2xml(obj: object): Promise<string>`
-Converte uma string XML em um objeto JavaScript.
-Converte uma string XML em um objeto JavaScript.
-
-### Exemplo entrada ou saida:
-```xml
-<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
-  <soapenv:Body>
-    <nfeResultMsg xmlns="http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4">
-      <retConsStatServ xmlns="http://www.portalfiscal.inf.br/nfe" versao="4.00">
-        <tpAmb>0</tpAmb>
-        <verAplic>1.00</verAplic>
-        <cStat>999</cStat>
-        <xMotivo>Rejeicao: Erro nao catalogado</xMotivo>
-        <cUF>51</cUF>
-      </retConsStatServ>
-    </nfeResultMsg>
-  </soapenv:Body>
-</soapenv:Envelope>
-```
-```json
-{
-  "soapenv:Envelope": {
-    "@xmlns:soapenv": "http://www.w3.org/2003/05/soap-envelope",
-    "soapenv:Body": {
-      "nfeResultMsg": {
-        "@xmlns": "http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4",
-        "retConsStatServ": {
-          "@xmlns": "http://www.portalfiscal.inf.br/nfe",
-          "@versao": "4.00",
-          "tpAmb": 0,
-          "verAplic": "1.00",
-          "cStat": 999,
-          "xMotivo": "Rejeicao: Erro nao catalogado",
-          "cUF": 51
-        }
-      }
-    }
-  }
-}
-```
-## 📥 Método `enviarDPS(xml: string }): Promise<string>`
-Este método é responsável por enviar DPS. Ele recebe um XML contendo a DPS a ser transmitida.
+## 📥 Método `async consulta({ NSU || DPS || chAcesso }): Promise<string>`
+O método `consulta` realiza a **consulta de NSU, DPS ou chAcesso**.
 ```ts
-let dps = " Conteudo ";
-tools.enviarDPS(xml);
+const resp = await myTools.consulta({ DPS: '000000000000000000000'});
+
+console.log({ // console.log(resp)
+  tipoAmbiente: 1,
+  versaoAplicativo: 'SefinNacional_1.4.0',
+  dataHoraProcessamento: '2025-10-26T17:46:51.7080703-03:00',
+  chaveAcesso: '00000000000000000000000000000000000'
+})
 ```
 
-## 📥 Método `async xmlSign(xmlJSON: string, data: any = { tag: "infNFe" }): Promise<string>`
-Este método é responsável por **assinar digitalmente** o XML da NF-e ou NFC-e utilizando o certificado digital A1 (formato `.pfx`). A assinatura segue o padrão exigido pela SEFAZ e é essencial para a validação do documento fiscal.
 ```ts
-let xml = "Conteudo da NFCe/NFe".
-const xmlAssinado = await tools.xmlSign(xml, {
-    tag: "infNFe" //Tag que vai ser usada para gerar assinatura.
-});
+const resp = await myTools.consulta({ chAcesso: '000000000000000000000'});
+console.log({ // console.log(resp);
+  tipoAmbiente: 1,
+  versaoAplicativo: 'SefinNacional_1.4.0',
+  dataHoraProcessamento: '2025-10-26T17:54:43.2025696-03:00',
+  chaveAcesso: '0000000000000000000000000000000000',
+  nfseXmlGZipB64:'', // Pode ser utilizado o zip2xml; import { zip2xml } from node-sped-nfse;
+})
+```
+Indisponivel ou divergencia na documentação SWAGGER GOV.
+```ts
+const resp = await myTools.consulta({ NSU: '0'});
+console.log({ // console.log(resp);
+
+})
 ```
 
-## 📥 Método `getCertificado: Promise<object>`
-Este método retorna, de forma assíncrona, o conteúdo do certificado digital **A1 (.pfx)** carregado na instância da classe `Tools`.
+## 📥 Método `async DANFSe(chAcesso): Promise<string>`
+O método `DANFSe` retorna um PDF atravez da chave de acesso.
 ```ts
-const certificado = await tools.getCertificado();
-console.log(certificado) //{ca,key,cert}
+myTools.DANFSe("{chAcesso}").then(pdfBuff => {
+    fs.writeFileSync("./testes/DANFSe.pdf", pdfBuff)
+}).catch(res => {
+    console.log(res)
+})
 ```
 
-## 📥 Método `async consultarNFe(chNFe: string): Promise<string>`
-O método `consultarNFe` realiza a **consulta de uma NF-e ou NFC-e na SEFAZ** utilizando a chave de acesso completa da nota e retorna o status dela em xml.
+## 📥 Método `async xmlSign(chAcesso, tag): Promise<string>`
+O método `xmlSign` retorna um XML assinado, por padrão ele ira assinar a infDPS, caso deseje assinar outro bloco, informar segundo parametro.
 ```ts
-const xmlStatus = await tools.consultarNFe("CHAVE DA NFE");
+myTools.xmlSign("{XML-STRING}").then(xmlSigned => {
+    fs.writeFileSync("./testes/xml_signed.pdf", xmlSigned);
+}).catch(res => {
+    console.log(res)
+})
 ```
 
-## 📥 Método `async sefazStatus(): Promise<string>`
-O método `sefazStatus` realiza a **consulta ao servidor da SEFAZ** utilizando a UF de inicializaçao.
+## 📥 Método `async enviarDPS(xmlSigned): Promise<string>`
+O método `enviarDPS` envia DPS para ser criado a NFSe.
 ```ts
-const xmlStatus = await tools.sefazStatus();
+myTools.enviarDPS("{xmlSigned}").then(resp => {
+  console.log({ // console.log(resp)
+    tipoAmbiente:1,
+    versaoAplicativo:"SefinNacional_1.4.0",
+    dataHoraProcessamento:"2025-10-24T08:51:22.410667-03:00",
+    idDps:"NFS0000000000000000000000000000",
+    chaveAcesso:"0000000000000000000",
+    nfseXmlGZipB64:"",
+    erros: [] // Se existir erros ira aparecer, caso contrario não ira constar no json.
+  })
+}).catch(res => {
+    console.log(res)
+})
 ```
 
-## 📥 Método `async sefazEvento({ chNFe, tpEvento, nProt , justificativa, textoCorrecao, sequencial }): Promise<string>`
-O método `sefazEvento` realiza a **Manifesto de uma NFe**.
+## 📥 Método `async enviarEvento({ chNFSe, tpEvento, dhEvento, id, xDesc, cMotivo, xMotivo, chSubstituta, CPFAgTrib, nProcAdm, idEvManifRej, xProcAdm, cEvtNFSe, idBloqOfic }): Promise<string>`
+O método `enviarEvento` envia um evento para sistema nacional.
 ```ts
-// 1. Manifestação - Confirmação
-tools.sefazEvento({ chNFe: "351701...", tpEvento: "210200" }).then(res => {
-    console.log(res) //Xml da sefaz
-}).catch(err=>{
-    console.error(err)
-});
+// 101101 — Cancelamento de NFS-e
+let ev101101 = {
+  chNFSe: "",
+  tpEvento: "101101",
+  xMotivo: "Motivo do cancelamento",
+  cMotivo: 9
+};
 
-//EXEMPLOS ADICIONAIS
-// 2. Cancelamento
-//await myTools.sefazEvento({ chNFe: "351701...", tpEvento: "110111", nProt: "135230000000000", justificativa: "Cancelamento por erro na emissão." });
+// 101103 — Solicitação de Análise Fiscal para Cancelamento
+let ev101103 = {
+  chNFSe: "",
+  tpEvento: "101103",
+  xMotivo: "Solicito análise fiscal para cancelamento",
+  cMotivo: 1
+};
 
-// 3. Carta de Correção
-//await myTools.sefazEvento({ chNFe: "351701...", tpEvento: "110110", textoCorrecao: "Corrigir a descrição do produto." });
+// 105102 — Cancelamento por Substituição (informar substituta)
+let ev105102 = {
+  chNFSe: "",
+  tpEvento: "105102",
+  chSubstituta: "",
+  xMotivo: "Cancelamento por substituição",
+  cMotivo: 5
+};
 
-// 4. Operação Não Realizada
-//await myTools.sefazEvento({ chNFe: "351701...", tpEvento: "210240", justificativa: "Entrega não realizada por recusa do destinatário." });
-```
+// 105104 — Decisão Fiscal (Cancelamento) com processo
+let ev105104 = {
+  chNFSe: "",
+  tpEvento: "105104",
+  CPFAgTrib: "",   // CPF do agente tributário
+  nProcAdm: "",    // nº do processo administrativo
+  cMotivo: 1,
+  xMotivo: "Decisão fiscal sobre pedido de cancelamento"
+};
 
+// 105105 — Decisão Fiscal (Cancelamento) com processo
+let ev105105 = {
+  chNFSe: "",
+  tpEvento: "105105",
+  CPFAgTrib: "",
+  nProcAdm: "",
+  cMotivo: 2,
+  xMotivo: "Decisão fiscal indeferindo/encerrando pedido de cancelamento"
+};
 
-## 📥 Método `async sefazDistDFe({ultNSU}): Promise<string>`
-O método `sefazDistDFe` realiza a **consulta ded NFe/NFCe** emitidas contra o CNPJ.
-```ts
-const xmlDocs = await tools.sefazDistDFe({ultNSU:"0"});
+// 202201 — Manifestação de Ciência (Prestador)
+let ev202201 = {
+  chNFSe: "",
+  tpEvento: "202201"
+};
+
+// 202205 — Manifestação de Rejeição (Prestador)
+let ev202205 = {
+  chNFSe: "",
+  tpEvento: "202205",
+  xMotivo: "Rejeição pelo Prestador",
+  cMotivo: 1
+};
+
+// 203202 — Manifestação de Ciência (Tomador)
+let ev203202 = {
+  chNFSe: "",
+  tpEvento: "203202"
+};
+
+// 203206 — Manifestação de Rejeição (Tomador)
+let ev203206 = {
+  chNFSe: "",
+  tpEvento: "203206",
+  xMotivo: "Rejeição pelo Tomador",
+  cMotivo: 1
+};
+
+// 204203 — Manifestação de Ciência (Intermediário)
+let ev204203 = {
+  chNFSe: "",
+  tpEvento: "204203"
+};
+
+// 204207 — Manifestação de Rejeição (Intermediário)
+let ev204207 = {
+  chNFSe: "",
+  tpEvento: "204207",
+  xMotivo: "Rejeição pelo Intermediário",
+  cMotivo: 1
+};
+
+// 205204 — Ato do Agente Tributário (ciência/registro)
+let ev205204 = {
+  chNFSe: "",
+  tpEvento: "205204",
+  CPFAgTrib: ""   // CPF do agente tributário
+};
+
+// 205208 — Ato do Agente Tributário (rejeição vinculada)
+let ev205208 = {
+  chNFSe: "",
+  tpEvento: "205208",
+  CPFAgTrib: "",
+  idEvManifRej: "", // ID do evento de manifestação de rejeição
+  xMotivo: "Justificativa do ato"
+};
+
+// 305101 — Processo Administrativo (abertura/associação)
+let ev305101 = {
+  chNFSe: "",
+  tpEvento: "305101",
+  CPFAgTrib: "",
+  nProcAdm: "",   // número do processo
+  xProcAdm: ""    // descrição/assunto do processo
+};
+
+// 305102 — Comunicação Administrativa (relativa à NFSe)
+let ev305102 = {
+  chNFSe: "",
+  tpEvento: "305102",
+  CPFAgTrib: "",
+  xMotivo: "Comunicação administrativa relacionada à NFSe",
+  cEvtNFSe: ""    // código/assunto específico do evento administrativo
+};
+
+// 305103 — Bloqueio/Ofício Administrativo
+let ev305103 = {
+  chNFSe: "",
+  tpEvento: "305103",
+  CPFAgTrib: "",
+  idBloqOfic: ""  // identificador do bloqueio/ofício
+};
+
+myTools.enviarEvento(ev?).then(resp => { // ev = variavel de evento escolhida
+  console.log({ // console.log(resp)
+    tipoAmbiente: 1,
+    versaoAplicativo: 'SefinNacional_1.4.0',
+    dataHoraProcessamento: '2025-10-26T18:25:35.4772793-03:00',
+    erro: []
+  })
+}).catch(res => {
+    console.log(res)
+})
 ```
